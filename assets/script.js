@@ -470,6 +470,22 @@ function cekStatusTombolPreview() {
     }
 }
 
+// Jalankan ini saat data pertama kali dimuat
+function inisialisasiFilterTahun() {
+    const s = document.getElementById("filterTahun");
+    if (!s) return;
+    
+    const tahunSekarang = new Date().getFullYear();
+    let html = `<option value="Semua">Semua Tahun</option>`;
+    
+    // Menampilkan pilihan tahun dari 2024 sampai sekarang
+    for (let t = 2024; t <= tahunSekarang; t++) {
+        html += `<option value="${t}">${t}</option>`;
+    }
+    s.innerHTML = html;
+    s.value = "Semua"; // Set default ke Semua agar data langsung muncul
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     renderSidebar(); 
     muatDataOtomatis();
