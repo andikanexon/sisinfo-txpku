@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Statistik & Grafik - TVRI Riau</title>
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+
+<body class="bg-light">
+  <nav class="navbar navbar-light bg-white shadow-sm sticky-top">
+    <div class="container-fluid justify-content-start p-2 px-3">
+      <button class="navbar-toggler border-0 p-0 me-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuSidebar">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="navbar-brand d-flex align-items-center m-0 p-0">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e0/TVRI_Riau.svg" alt="Logo TVRI" style="height: 30px;" class="me-2">
+        <span class="mb-0 h5 fw-bold text-dark text-wrap">Sistem Informasi Satuan Transmisi Pekanbaru</span>
+      </div>
+    </div>
+  </nav>
+
+  <div id="sidebar-container"></div>
+
+  <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header text-white" style="background-color: #003366;">
+        <h5 class="modal-title">🔐 Login Admin</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-4">
+        <input type="text" id="inputUser" class="form-control mb-2" placeholder="Username">
+        <input type="password" id="inputPass" class="form-control mb-3" placeholder="Password">
+        <button onclick="prosesLogin()" class="btn btn-primary w-100">MASUK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <div class="container mt-4">
+    <div class="card shadow-sm mb-4 border-0">
+      <div class="card-body text-white rounded" style="background-color: #003366;">
+        <h4 class="mb-1">Statistik & Performa Petugas</h4>
+        <p class="mb-0 small">Visualisasi total kontribusi kegiatan petugas berdasarkan data masuk.</p>
+      </div>
+    </div>
+
+    <div id="sectionGrafik">
+      <div class="card shadow-sm border-0 p-4">
+        <h5 id="judulGrafik" class="text-center fw-bold text-dark mb-4">Grafik Kontribusi Petugas</h5>
+        <div style="position: relative; height: 60vh;">
+          <canvas id="grafikPegawai"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
+<script src="assets/script.js"></script>
+</body>
+</html>

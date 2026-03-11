@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Log Kinerja - TVRI Riau</title>
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+
+<body class="bg-light">
+
+  <nav class="navbar navbar-light bg-white shadow-sm sticky-top">
+    <div class="container-fluid justify-content-start p-2 px-3">
+      <button class="navbar-toggler border-0 p-0 me-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuSidebar">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="navbar-brand d-flex align-items-center m-0 p-0">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e0/TVRI_Riau.svg" alt="Logo TVRI" style="height: 30px;" class="me-2">
+        <span class="mb-0 h5 fw-bold text-dark text-wrap">Sistem Informasi Satuan Transmisi Pekanbaru</span>
+      </div>
+    </div>
+  </nav>
+
+  <div class="ticker-wrapper">
+    <div class="ticker-scroll">
+      <span class="ticker-item">📢 <strong>INFO TEKNIK:</strong> Selalu gunakan format waktu WIB. • Pastikan eviden terunggah ke folder Drive yang benar. • Media Pemersatu Bangsa!</span>
+      <span class="ticker-item">📢 <strong>INFO TEKNIK:</strong> Selalu gunakan format waktu WIB. • Pastikan eviden terunggah ke folder Drive yang benar. • Media Pemersatu Bangsa!</span>
+    </div>
+  </div>
+
+  <div id="sidebar-container"></div>
+
+  <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header text-white" style="background-color: #003366;">
+        <h5 class="modal-title">🔐 Login Admin</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-4">
+        <input type="text" id="inputUser" class="form-control mb-2" placeholder="Username">
+        <input type="password" id="inputPass" class="form-control mb-3" placeholder="Password">
+        <button onclick="prosesLogin()" class="btn btn-primary w-100">MASUK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <div class="container mt-4">
+    <div class="card shadow-sm mb-4 border-0">
+      <div class="card-body text-white rounded" style="background-color: #003366;">
+        <h4 class="mb-1">Log Aktivitas Harian</h4>
+        <p class="mb-0 small">Filter data berdasarkan nama dan periode untuk mencetak laporan PDF.</p>
+      </div>
+    </div>
+
+    <div id="sectionLogTabel">
+      <div class="row mb-3 align-items-end g-2">
+        <div class="col-md-3">
+          <label class="small fw-bold text-muted">NAMA PEGAWAI:</label>
+          <select id="filterNama" class="form-select border-primary" onchange="tampilkanLogTabel()"></select>
+        </div>
+        <div class="col-md-2">
+          <label class="small fw-bold text-muted">BULAN:</label>
+          <select id="filterBulan" class="form-select border-primary" onchange="tampilkanLogTabel()">
+            <option value="Semua">Semua Bulan</option>
+            <option value="0">Januari</option><option value="1">Februari</option>
+            <option value="2">Maret</option><option value="3">April</option>
+            <option value="4">Mei</option><option value="5">Juni</option>
+            <option value="6">Juli</option><option value="7">Agustus</option>
+            <option value="8">September</option><option value="9">Oktober</option>
+            <option value="10">November</option><option value="11">Desember</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <label class="small fw-bold text-muted">TAHUN:</label>
+          <select id="filterTahun" class="form-select border-primary" onchange="tampilkanLogTabel()"></select>
+        </div>
+        <div class="col-md-2">
+          <button id="btnPreview" class="btn btn-success w-100 fw-bold" onclick="buatPreview()" disabled>📄 PDF PREVIEW</button>
+        </div>
+        <div class="col-md-3" id="tempatLink"></div>
+      </div>
+
+      <div class="table-responsive bg-white rounded shadow-sm border">
+        <table class="table table-hover table-bordered mb-0" style="font-size: 13px;">
+          <thead class="table-light text-center align-middle">
+            <tr>
+                <th style="width: 5%;">Tanggal</th>
+                <th style="width: 10%">Nama</th>
+                <th style="width: 5%;">Shift</th>
+                <th style="width: 10%;">Waktu (WIB)</th>
+                <th style="width: 22%;">Sasaran Aktivitas</th>
+                <th style="width: 27%;">Uraian / Output</th>
+                <th style="width: 11%;">Eviden</th>
+                <th style="width: 10%;">Keterangan</th>
+            </tr>
+            </thead>
+          <tbody id="tabelBody">
+            <tr><td colspan="7" class="text-center py-5">Memuat data dari server...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/script.js"></script>
+</body>
+</html>

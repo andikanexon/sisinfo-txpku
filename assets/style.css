@@ -1,0 +1,181 @@
+/* --- KONSTRUKSI DASAR & WARNA --- */
+:root {
+  --tvri-blue: #003366;
+  --tvri-yellow: #ffc107;
+  --sidebar-dark: #0f172a;
+  --sidebar-light: #1e293b;
+  --text-muted: #94a3b8;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f8f9fa;
+}
+
+/* --- SIDEBAR MENU MODERN --- */
+#menuSidebar {
+  background: linear-gradient(180deg, var(--sidebar-light) 0%, var(--sidebar-dark) 100%);
+  width: 260px;
+  box-shadow: 4px 0 15px rgba(0,0,0,0.5);
+}
+
+.offcanvas-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 20px 25px;
+}
+
+.offcanvas-title {
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #ffffff;
+}
+
+.menu-modern {
+  background: transparent !important;
+  color: var(--text-muted) !important;
+  border: none !important;
+  padding: 12px 18px;
+  margin: 4px 15px;
+  border-radius: 10px;
+  font-weight: 500;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.menu-modern:hover, .menu-modern.active {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+  transform: translateX(8px);
+}
+
+.menu-icon {
+  font-size: 1.2rem;
+}
+
+/* --- TICKER INFO (TEXT BERJALAN) --- */
+.ticker-wrapper {
+  width: 100%;
+  background: var(--tvri-blue);
+  color: white;
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 10px 0;
+  border-bottom: 3px solid var(--tvri-yellow);
+  position: sticky;
+  top: 56px;
+  z-index: 1020;
+}
+
+.ticker-scroll {
+  display: inline-block;
+  white-space: nowrap;
+  animation: ticker-move 40s linear infinite;
+}
+
+.ticker-item {
+  display: inline-block;
+  padding: 0 50px;
+  font-size: 13px;
+}
+
+@keyframes ticker-move {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* --- KARTU STATISTIK & STATUS --- */
+.stat-card {
+  border-left: 5px solid var(--tvri-blue);
+  border-radius: 10px;
+  transition: 0.3s;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+}
+
+.site-card {
+  border-radius: 12px;
+  background: white;
+  border: 1px solid #eef0f2;
+  transition: 0.3s;
+}
+
+.status-badge-on { background-color: #28a745; color: white; }
+.status-badge-off { background-color: #dc3545; color: white; }
+.status-badge-warn { background-color: var(--tvri-yellow); color: black; }
+
+/* --- TABEL LOG (7 KOLOM) --- */
+.table-responsive {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.table thead {
+  background-color: #f1f5f9;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+
+.btn-eviden {
+  font-size: 10px;
+  padding: 2px 6px;
+  margin: 1px;
+  font-weight: bold;
+}
+
+/* --- ANIMASI FADE (DASHBOARD) --- */
+.fade-container {
+  position: relative;
+  min-height: 250px;
+}
+
+.fade-item {
+  position: absolute;
+  width: 100%;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.8s ease-in-out, visibility 0.8s;
+}
+
+.fade-item.active {
+  opacity: 1;
+  visibility: visible;
+  position: relative;
+}
+
+/* --- RESPONSIVE MOBILE --- */
+@media (max-width: 768px) {
+  .navbar-brand span {
+    font-size: 14px;
+  }
+  .ticker-item {
+    font-size: 11px;
+    padding: 0 20px;
+  }
+}
+
+/* Styling Modal */
+.modal-content {
+    border-radius: 15px;
+}
+.modal-header {
+    border-radius: 15px 15px 0 0;
+}
+.form-control:focus {
+    border-color: #003366;
+    box-shadow: 0 0 0 0.25rem rgba(0, 51, 102, 0.25);
+}
+
+/* Warna khusus untuk menu yang aktif */
+.menu-modern.active {
+    background: rgba(255, 193, 7, 0.2) !important; /* Kuning TVRI */
+    border-left: 4px solid #ffc107 !important;
+}
