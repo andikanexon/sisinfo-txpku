@@ -38,10 +38,18 @@ async function muatDataOtomatis() {
 
 function inisialisasiHalaman() {
     if (document.getElementById("gridStatusTx")) updateBeranda();
+    
     if (document.getElementById("tabelBody")) {
-        prosesFilterDropdown();
+        // Panggil pengisi filter
+        prosesFilterDropdown(); 
+        // Panggil pengisi tahun (agar tidak "Data tidak ditemukan")
+        inisialisasiFilterTahun(); 
+        // Tampilkan tabel
         tampilkanLogTabel();
+        // Cek tombol PDF
+        cekStatusTombolPreview();
     }
+    
     if (document.getElementById("grafikPegawai")) renderGrafik();
 }
 
@@ -134,16 +142,25 @@ function updateBeranda() {
 // --- 4. LOGIKA TABEL (log-petugas.html) ---
 function prosesFilterDropdown() {
     const filterNama = document.getElementById("filterNama");
-    if (filterNama && filterNama.innerHTML === "") {
+    // Ubah syarat: Jika masih berisi "Memuat" atau "Semua", maka isi dengan data baru
+    if (filterNama && (filterNama.options.length <= 1 || filterNama.value === "Semua")) {
         const names = [...new Set(dataGlobal.map(i => i.nama))].filter(n => n).sort();
-        let html = '<option value="Semua">Tampilkan Semua</option>';
+        let html = '<option value="Semua">-- Tampilkan Semua --</option>';
         names.forEach(n => html += `<option value="${n}">${n}</option>`);
         filterNama.innerHTML = html;
-        
+    }
+    
+    // Inisialisasi Tahun jika elemen ada
+    const filterTahun = document.getElementById("filterTahun");
+    if (filterTahun && filterTahun.options.length <= 1) {
         const years = [...new Set(dataGlobal.map(i => new Date(i.timestampTanggal).getFullYear()))].sort((a,b) => b-a);
         let htmlTahun = '<option value="Semua">Semua Tahun</option>';
-        years.forEach(y => htmlTahun += `<option value="${y}">${y}</option>`);
-        document.getElementById("filterTahun").innerHTML = htmlTahun;
+        // Jika data kosong/gagal, minimal ada tahun sekarang
+        if (years.length === 0) years.push(new Date().getFullYear());
+        years.forEach(y => {
+            if(!isNaN(y)) htmlTahun += `<option value="${y}">${y}</option>`;
+        });
+        filterTahun.innerHTML = htmlTahun;
     }
 }
 
@@ -271,9 +288,14 @@ function prosesLogin() {
     if (user === "Admin" && pass === "txpku1") {
         isLoggedIn = true;
         localStorage.setItem("isLoggedIn", "true");
-        const modal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
-        if(modal) modal.hide();
+        const modalElement = document.getElementById('loginModal');
+        const modal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+        modal.hide();
         renderSidebar();
+        
+        // PENTING: Update tombol preview setelah login berhasil
+        if (document.getElementById("btnPreview")) cekStatusTombolPreview();
+        
         alert("Otorisasi Berhasil!");
     } else {
         alert("Username/Password Salah!");

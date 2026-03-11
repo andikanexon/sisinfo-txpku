@@ -4,11 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Log Kinerja - TVRI Riau</title>
-  
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="assets/style.css">
 </head>
-
 <body class="bg-light">
 
   <nav class="navbar navbar-light bg-white shadow-sm sticky-top">
@@ -26,27 +24,10 @@
   <div class="ticker-wrapper">
     <div class="ticker-scroll">
       <span class="ticker-item">📢 <strong>INFO TEKNIK:</strong> Selalu gunakan format waktu yang benar. • Pastikan eviden terunggah sesuai dengan Sasaran Akivitas. • Media Pemersatu Bangsa!</span>
-      <span class="ticker-item">📢 <strong>INFO TEKNIK:</strong> Selalu gunakan format waktu yang benar. • Pastikan eviden terunggah sesuai dengan Sasaran Akivitas. • Media Pemersatu Bangsa!</span>
     </div>
   </div>
 
   <div id="sidebar-container"></div>
-
-  <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content border-0 shadow">
-      <div class="modal-header text-white" style="background-color: #003366;">
-        <h5 class="modal-title">🔐 Login Admin</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body p-4">
-        <input type="text" id="inputUser" class="form-control mb-2" placeholder="Username">
-        <input type="password" id="inputPass" class="form-control mb-3" placeholder="Password">
-        <button onclick="prosesLogin()" class="btn btn-primary w-100">MASUK</button>
-      </div>
-    </div>
-  </div>
-</div>
 
   <div class="container mt-4">
     <div class="card shadow-sm mb-4 border-0">
@@ -60,8 +41,8 @@
       <div class="row mb-3 align-items-end g-2">
         <div class="col-md-4">
           <label class="small fw-bold text-muted">NAMA PEGAWAI:</label>
-          <select id="filterNama" class="form-select border-primary" onchange="tampilkanLogTabel();">
-            <option value="Semua">-- Tampilkan Semua --</option>
+          <select id="filterNama" class="form-select border-primary" onchange="tampilkanLogTabel(); cekStatusTombolPreview();">
+            <option value="Semua">-- Memuat Nama... --</option>
           </select>
         </div>
         <div class="col-md-3">
@@ -79,10 +60,11 @@
         <div class="col-md-2">
           <label class="small fw-bold text-muted">TAHUN:</label>
           <select id="filterTahun" class="form-select border-primary" onchange="tampilkanLogTabel()">
-              </select>
+            <option value="Semua">Semua</option>
+          </select>
         </div>
         <div class="col-md-3">
-          <button id="btnPreview" onclick="buatPreview()" class="btn btn-success w-100 fw-bold">
+          <button id="btnPreview" onclick="buatPreview()" class="btn btn-secondary w-100 fw-bold" disabled>
             📄 PDF PREVIEW
           </button>
         </div>
@@ -108,6 +90,22 @@
             <tr><td colspan="8" class="text-center py-5">Memuat data dari server...</td></tr>
           </tbody>
         </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow">
+        <div class="modal-header text-white" style="background-color: #003366;">
+          <h5 class="modal-title">🔐 Login Admin</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body p-4">
+          <input type="text" id="inputUser" class="form-control mb-2" placeholder="Username">
+          <input type="password" id="inputPass" class="form-control mb-3" placeholder="Password">
+          <button onclick="prosesLogin()" class="btn btn-primary w-100">MASUK</button>
+        </div>
       </div>
     </div>
   </div>
