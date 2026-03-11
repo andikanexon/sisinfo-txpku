@@ -85,16 +85,19 @@ function updateBeranda() {
     });
     if (document.getElementById("gridStatusTx")) document.getElementById("gridStatusTx").innerHTML = statusHtml;
 
-    const recent = [...dataGlobal].sort((a,b) => b.timestampTanggal - a.timestampTanggal).slice(0, 5);
-    if (document.getElementById("listRecentActivity")) {
-        document.getElementById("listRecentActivity").innerHTML = recent.map(i => `
-            <li class="list-group-item d-flex justify-content-between align-items-center py-3">
-                <div>
-                    <div class="fw-bold" style="font-size:14px; color:#003366">${i.nama}</div>
-                    <small class="text-muted">📅 ${formatTanggalIndo(i.timestampTanggal)} • ${i.uraian ? i.uraian.substring(0,40) : '-'}...</small>
-                </div>
-                <span class="badge bg-primary rounded-pill" style="font-size:10px">${i.shift || '-'}</span>
-            </li>`).join('');
+    const recent = [...dataGlobal].sort((a, b) => {
+    return new Date(b.timestampTanggal) - new Date(a.timestampTanggal);
+        }).slice(0, 5);
+
+        if (document.getElementById("listRecentActivity")) {
+    document.getElementById("listRecentActivity").innerHTML = recent.map(i => `
+        <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+            <div>
+                <div class="fw-bold" style="font-size:14px; color:#003366">${i.nama}</div>
+                <small class="text-muted">📅 ${formatTanggalIndo(i.timestampTanggal)} | 🕒 ${new Date(i.timestampTanggal).getHours().toString().padStart(2, '0')}:${new Date(i.timestampTanggal).getMinutes().toString().padStart(2, '0')}...</small>
+            </div>
+            <span class="badge bg-primary rounded-pill" style="font-size:10px">${i.shift || '-'}</span>
+        </li>`).join('');
     }
 }
 
@@ -121,10 +124,18 @@ function tampilkanLogTabel() {
     const tBody = document.getElementById("tabelBody");
     if (!tBody) return;
 
+    // Filter data terlebih dahulu
     const filtered = dataGlobal.filter(i => {
         const d = new Date(i.timestampTanggal);
-        return (n === "Semua" || i.nama === n) && (b === "Semua" || d.getMonth().toString() === b) && (t === "Semua" || d.getFullYear().toString() === t);
-    }).sort((a,b) => b.timestampTanggal - a.timestampTanggal);
+        return (n === "Semua" || i.nama === n) && 
+               (b === "Semua" || d.getMonth().toString() === b) && 
+               (t === "Semua" || d.getFullYear().toString() === t);
+    });
+
+    // PROSES SORTING: Membandingkan waktu secara milidetik (Latest First)
+    filtered.sort((a, b) => {
+        return new Date(b.timestampTanggal) - new Date(a.timestampTanggal);
+    });
 
     tBody.innerHTML = filtered.map(i => {
         let docs = "";
@@ -132,7 +143,6 @@ function tampilkanLogTabel() {
         if (i.link2?.includes("http")) docs += `<a href="${i.link2}" target="_blank" class="btn btn-info btn-eviden text-white">E2</a>`;
         if (i.link3?.includes("http")) docs += `<a href="${i.link3}" target="_blank" class="btn btn-secondary btn-eviden">E3</a>`;
         
-        // Cari bagian return di dalam tBody.innerHTML.map(...) pada fungsi tampilkanLogTabel
         return `
             <tr>
                 <td class="text-center">${formatTanggalIndo(i.timestampTanggal)}</td>
@@ -145,8 +155,6 @@ function tampilkanLogTabel() {
                 <td>${i.keterangan || '-'}</td>
             </tr>`;
     }).join('') || '<tr><td colspan="8" class="text-center py-4">Data tidak ditemukan</td></tr>';
-    
-    document.getElementById("btnPreview").disabled = (n === "Semua");
 }
 
 // --- 5. LOGIKA SIDEBAR & MODAL (Auto-Inject) ---
