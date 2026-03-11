@@ -112,24 +112,21 @@ function tampilkanLogTabel() {
     const tBody = document.getElementById("tabelBody");
     if (!tBody) return;
 
-    // Filter data terlebih dahulu
-    const filtered = dataGlobal.filter(i => {
+    // Filter data
+    let filtered = dataGlobal.filter(i => {
         const d = new Date(i.timestampTanggal);
-        return (n === "Semua" || i.nama === n) && 
-               (b === "Semua" || d.getMonth().toString() === b) && 
-               (t === "Semua" || d.getFullYear().toString() === t);
+        const matchNama = (n === "Semua" || i.nama === n);
+        const matchBulan = (b === "Semua" || d.getMonth().toString() === b);
+        const matchTahun = (t === "Semua" || d.getFullYear().toString() === t);
+        return matchNama && matchBulan && matchTahun;
     });
 
-    // PROSES SORTING: Membandingkan waktu secara milidetik (Latest First)
-    filtered.sort((a, b) => {
-        return new Date(b.timestampTanggal) - new Date(a.timestampTanggal);
-    });
+    // SORTING: Yang terbaru di atas
+    filtered.sort((a, b) => new Date(b.timestampTanggal) - new Date(a.timestampTanggal));
 
     tBody.innerHTML = filtered.map(i => {
         let docs = "";
-        if (i.link1?.includes("http")) docs += `<a href="${i.link1}" target="_blank" class="btn btn-primary btn-eviden">E1</a>`;
-        if (i.link2?.includes("http")) docs += `<a href="${i.link2}" target="_blank" class="btn btn-info btn-eviden text-white">E2</a>`;
-        if (i.link3?.includes("http")) docs += `<a href="${i.link3}" target="_blank" class="btn btn-secondary btn-eviden">E3</a>`;
+        if (i.link1 && i.link1.includes("http")) docs += `<a href="${i.link1}" target="_blank" class="btn btn-primary btn-eviden">E1</a>`;
         
         return `
             <tr>
