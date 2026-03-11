@@ -58,17 +58,13 @@
 
     <div id="sectionLogTabel">
       <div class="row mb-3 align-items-end g-2">
-        <div class="col-md-3">
+        <div class="col-md-4">
           <label class="small fw-bold text-muted">NAMA PEGAWAI:</label>
-          <select id="filterNama" class="form-select" onchange="tampilkanLogTabel(); cekStatusTombolPreview();">
-          <option value="Semua">-- Tampilkan Semua --</option>
+          <select id="filterNama" class="form-select border-primary" onchange="tampilkanLogTabel();">
+            <option value="Semua">-- Tampilkan Semua --</option>
           </select>
-
-        <button id="btnPreview" onclick="buatPreview()" class="btn btn-secondary w-100 fw-bold" disabled>
-            📄 PDF PREVIEW
-        </button>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-3">
           <label class="small fw-bold text-muted">BULAN:</label>
           <select id="filterBulan" class="form-select border-primary" onchange="tampilkanLogTabel()">
             <option value="Semua">Semua Bulan</option>
@@ -82,30 +78,34 @@
         </div>
         <div class="col-md-2">
           <label class="small fw-bold text-muted">TAHUN:</label>
-          <select id="filterTahun" class="form-select border-primary" onchange="tampilkanLogTabel()"></select>
+          <select id="filterTahun" class="form-select border-primary" onchange="tampilkanLogTabel()">
+              </select>
         </div>
-        <div class="col-md-2">
-          <button id="btnPreview" class="btn btn-success w-100 fw-bold" onclick="buatPreview()" disabled>📄 PDF PREVIEW</button>
+        <div class="col-md-3">
+          <button id="btnPreview" onclick="buatPreview()" class="btn btn-success w-100 fw-bold">
+            📄 PDF PREVIEW
+          </button>
         </div>
-        <div class="col-md-3" id="tempatLink"></div>
       </div>
+
+      <div id="tempatLink" class="mb-3"></div>
 
       <div class="table-responsive bg-white rounded shadow-sm border">
         <table class="table table-hover table-bordered mb-0" style="font-size: 13px;">
           <thead class="table-light text-center align-middle">
             <tr>
-                <th style="width: 5%;">Tanggal</th>
-                <th style="width: 10%">Nama</th>
-                <th style="width: 5%;">Shift</th>
-                <th style="width: 10%;">Waktu (WIB)</th>
-                <th style="width: 22%;">Sasaran Aktivitas</th>
-                <th style="width: 27%;">Uraian / Output</th>
-                <th style="width: 11%;">Eviden</th>
-                <th style="width: 10%;">Keterangan</th>
+              <th style="width: 5%;">Tanggal</th>
+              <th style="width: 10%">Nama</th>
+              <th style="width: 5%;">Shift</th>
+              <th style="width: 10%;">Waktu (WIB)</th>
+              <th style="width: 20%;">Sasaran Aktivitas</th>
+              <th style="width: 25%;">Uraian / Output</th>
+              <th style="width: 15%;">Eviden</th>
+              <th style="width: 10%;">Keterangan</th>
             </tr>
-            </thead>
+          </thead>
           <tbody id="tabelBody">
-            <tr><td colspan="7" class="text-center py-5">Memuat data dari server...</td></tr>
+            <tr><td colspan="8" class="text-center py-5">Memuat data dari server...</td></tr>
           </tbody>
         </table>
       </div>
