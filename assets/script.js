@@ -87,18 +87,31 @@ function updateBeranda() {
 
     const recent = [...dataGlobal].sort((a, b) => {
     return new Date(b.timestampTanggal) - new Date(a.timestampTanggal);
-        }).slice(0, 5);
+    }).slice(0, 5);
 
-        if (document.getElementById("listRecentActivity")) {
-            document.getElementById("listRecentActivity").innerHTML = recent.map(i => `
+    const listRecent = document.getElementById("listRecentActivity");
+    if (listRecent) {
+        listRecent.innerHTML = recent.map(i => {
+            // Ambil jam dan menit dari timestamp
+            const d = new Date(i.timestampTanggal);
+            const jam = d.getHours().toString().padStart(2, '0');
+            const menit = d.getMinutes().toString().padStart(2, '0');
+
+            return `
                 <li class="list-group-item d-flex justify-content-between align-items-center py-3">
-                    <div>
+                    <div style="max-width: 85%;">
                         <div class="fw-bold" style="font-size:14px; color:#003366">${i.nama}</div>
-                        <small class="text-muted">📅 ${formatTanggalIndo(i.timestampTanggal)} | 🕒 ${new Date(i.timestampTanggal).getHours().toString().padStart(2, '0')}:${new Date(i.timestampTanggal).getMinutes().toString().padStart(2, '0')}...</small>
+                        <small class="text-muted">
+                            📅 ${formatTanggalIndo(i.timestampTanggal)} • 🕒 ${jam}:${menit}
+                        </small>
+                        <div class="mt-1 text-dark" style="font-size:13px; line-height:1.4;">
+                            ${i.uraian ? i.uraian.substring(0, 60) : '-'}...
+                        </div>
                     </div>
                     <span class="badge bg-primary rounded-pill" style="font-size:10px">${i.shift || '-'}</span>
-                </li>`).join('');
-        }
+                </li>`;
+        }).join('') || '<li class="list-group-item text-center">Belum ada aktivitas</li>';
+    }
 }
 
 // --- 4. LOGIKA TABEL (log-petugas.html) ---
