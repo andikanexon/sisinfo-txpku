@@ -109,19 +109,17 @@ function updateBeranda() {
     const listRecent = document.getElementById("listRecentActivity");
     if (listRecent) {
         listRecent.innerHTML = recent.map(i => {
-            // Jika jam masih 00:00, kita coba parse manual string timestamp-nya
-            const d = new Date(i.timestampTanggal);
-            
-            // Format jam HH:mm
-            const jam = d.getHours().toString().padStart(2, '0');
-            const menit = d.getMinutes().toString().padStart(2, '0');
-            const waktuFix = (jam === "00" && menit === "00") ? "Cek Data" : `${jam}:${menit}`;
+            // Karena di Apps Script kamu sudah menambahkan " WIB", 
+            // kita langsung panggil saja i.mulai dan i.selesai
+            const rentangWaktu = `${i.mulai} - ${i.selesai}`;
 
             return `
                 <li class="list-group-item d-flex justify-content-between align-items-center py-3">
                     <div style="max-width: 85%;">
                         <div class="fw-bold" style="font-size:14px; color:#003366">${i.nama}</div>
-                        <small class="text-muted">📅 ${formatTanggalIndo(i.timestampTanggal)} • 🕒 ${waktuFix} WIB</small>
+                        <small class="text-muted">
+                            📅 ${formatTanggalIndo(i.timestampTanggal)} • 🕒 ${rentangWaktu}
+                        </small>
                         <div class="mt-1 text-dark" style="font-size:13px; line-height:1.4;">
                             ${i.uraian ? i.uraian.substring(0, 65) : '-'}...
                         </div>
@@ -131,6 +129,7 @@ function updateBeranda() {
         }).join('') || '<li class="list-group-item text-center">Belum ada aktivitas</li>';
     }
 }
+
 
 // --- 4. LOGIKA TABEL (log-petugas.html) ---
 function prosesFilterDropdown() {
