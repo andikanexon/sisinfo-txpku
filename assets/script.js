@@ -154,7 +154,7 @@ function tampilkanLogTabel() {
     const tBody = document.getElementById("tabelBody");
     if (!tBody) return;
 
-    // Filter data
+    // 1. Filter Data
     let filtered = dataGlobal.filter(i => {
         const d = new Date(i.timestampTanggal);
         const matchNama = (n === "Semua" || i.nama === n);
@@ -163,12 +163,28 @@ function tampilkanLogTabel() {
         return matchNama && matchBulan && matchTahun;
     });
 
-    // SORTING: Yang terbaru di atas
+    // 2. Sorting: Laporan terbaru berdasarkan Timestamp (Detik) di atas
     filtered.sort((a, b) => new Date(b.timestampTanggal) - new Date(a.timestampTanggal));
 
+    // 3. Render ke Tabel
     tBody.innerHTML = filtered.map(i => {
+        // --- PERBAIKAN EVIDEN: MENGEMBALIKAN E1, E2, E3 ---
         let docs = "";
-        if (i.link1 && i.link1.includes("http")) docs += `<a href="${i.link1}" target="_blank" class="btn btn-primary btn-eviden">E1</a>`;
+        
+        // Cek Link 1 (E1) - Biru
+        if (i.link1 && i.link1.trim().startsWith("http")) {
+            docs += `<a href="${i.link1}" target="_blank" class="btn btn-primary btn-eviden me-1">E1</a>`;
+        }
+        
+        // Cek Link 2 (E2) - Biru Muda (Info)
+        if (i.link2 && i.link2.trim().startsWith("http")) {
+            docs += `<a href="${i.link2}" target="_blank" class="btn btn-info btn-eviden text-white me-1">E2</a>`;
+        }
+        
+        // Cek Link 3 (E3) - Abu-abu (Secondary)
+        if (i.link3 && i.link3.trim().startsWith("http")) {
+            docs += `<a href="${i.link3}" target="_blank" class="btn btn-secondary btn-eviden">E3</a>`;
+        }
         
         return `
             <tr>
