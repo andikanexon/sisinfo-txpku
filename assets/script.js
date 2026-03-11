@@ -415,49 +415,58 @@ function renderGrafik() {
 }
 
 async function buatPreview() {
-    // 1. Cek Login
-    if (!isLoggedIn) { 
-        alert("Akses Ditolak! Silakan Login Admin terlebih dahulu melalui menu sidebar."); 
-        return; 
-    }
+    // Syarat terakhir sebelum kirim ke Google
+    if (!isLoggedIn) return alert("Silakan login Admin!");
     
-    const btn = document.getElementById("btnPreview");
     const n = document.getElementById("filterNama").value;
     const b = document.getElementById("filterBulan").value;
     const t = document.getElementById("filterTahun").value;
-    const linkContainer = document.getElementById("tempatLink");
-
-    // 2. Cek apakah Nama sudah dipilih
-    if (n === "Semua") {
-        alert("Silakan pilih satu Nama Petugas untuk mencetak PDF.");
-        return;
-    }
-
+    
+    const btn = document.getElementById("btnPreview");
     btn.innerHTML = "⏳ Sedang Memproses...";
     btn.disabled = true;
 
+    // URL ini harus sesuai dengan SCRIPT_URL milikmu
+    const url = `${SCRIPT_URL}?action=previewPDF&nama=${encodeURIComponent(n)}&bulan=${b}&tahun=${t}`;
+    
     try {
-        const urlRequest = `${SCRIPT_URL}?action=previewPDF&nama=${encodeURIComponent(n)}&bulan=${b}&tahun=${t}`;
-        const response = await fetch(urlRequest);
-        const hasil = await response.json();
+        const res = await fetch(url);
+        const data = await res.json();
         
         btn.innerHTML = "📄 PDF PREVIEW";
         btn.disabled = false;
 
-        if (hasil.success) {
-            // Munculkan tombol biru untuk buka PDF
-            linkContainer.innerHTML = `
-                <a href="${hasil.url}" target="_blank" class="btn btn-primary w-100 fw-bold animate__animated animate__bounceIn">
-                     BUKA PDF
+        if (data.success) {
+            document.getElementById("tempatLink").innerHTML = `
+                <a href="${data.url}" target="_blank" class="btn btn-primary w-100 mt-2 animate__animated animate__bounceIn">
+                    🚀 BUKA PDF (${n})
                 </a>`;
         } else {
-            alert("Gagal: " + hasil.message);
+            alert("Gagal: " + data.message);
         }
-    } catch (err) {
-        console.error(err);
-        alert("Gagal menghubungi server Google. Pastikan URL Web App sudah benar.");
+    } catch (e) {
+        alert("Koneksi ke server gagal!");
         btn.innerHTML = "📄 PDF PREVIEW";
         btn.disabled = false;
+    }
+}
+
+// Fungsi untuk mengaktifkan/mematikan tombol Preview
+function cekStatusTombolPreview() {
+    const filterNama = document.getElementById("filterNama");
+    const btnPreview = document.getElementById("btnPreview");
+    
+    if (!filterNama || !btnPreview) return;
+
+    // Tombol hanya aktif jika: 1. Sudah Login, 2. Nama bukan "Semua"
+    if (isLoggedIn && filterNama.value !== "Semua") {
+        btnPreview.disabled = false;
+        btnPreview.classList.remove("btn-secondary"); // Hapus warna abu-abu
+        btnPreview.classList.add("btn-success");      // Ganti jadi hijau
+    } else {
+        btnPreview.disabled = true;
+        btnPreview.classList.add("btn-secondary");
+        btnPreview.classList.remove("btn-success");
     }
 }
 
