@@ -47,65 +47,40 @@ function inisialisasiHalaman() {
 
 // --- 3. LOGIKA DASHBOARD (index.html) ---
 function updateBeranda() {
+    // 1. Update Statistik Kartu (Tetap sama)
     if (document.getElementById("statTotalLaporan")) document.getElementById("statTotalLaporan").innerText = dataGlobal.length;
-
-    if (document.getElementById("statHariIni")) {
-        const hariIni = new Date().toLocaleDateString('en-CA');
-        const countHariIni = dataGlobal.filter(i => new Date(i.timestampTanggal).toLocaleDateString('en-CA') === hariIni).length;
-        document.getElementById("statHariIni").innerText = countHariIni;
-    }
-
     if (document.getElementById("statTotalPersonel")) {
         const listPetugas = [...new Set(dataGlobal.map(i => i.nama))].filter(n => n);
         document.getElementById("statTotalPersonel").innerText = listPetugas.length;
     }
 
-    if (document.getElementById("statEviden")) {
-        const txNormal = statusGlobal.filter(i => {
-            const s = i.status ? i.status.toLowerCase().trim() : "";
-            return s === "normal" || s === "on" || s === "online";
-        }).length;
-        document.getElementById("statEviden").innerText = txNormal;
-    }
-
-    let statusHtml = "";
-    statusGlobal.forEach(item => {
-        let cls = "status-badge-warn";
-        let s = item.status ? item.status.toLowerCase().trim() : "";
-        if (s === "normal" || s === "on" || s === "online") cls = "status-badge-on";
-        if (s === "off" || s === "down" || s === "off-air") cls = "status-badge-off";
-        
-        statusHtml += `
-            <div class="col-6 col-md-3">
-                <div class="site-card p-2 text-center shadow-sm border">
-                    <div class="small fw-bold text-dark">${item.site}</div>
-                    <span class="badge ${cls} w-100 mt-1" style="font-size:10px">${item.status}</span>
-                </div>
-            </div>`;
+    // 2. SORTING: Mengurutkan dataGlobal dari yang paling baru (berdasarkan waktu asli)
+    // Kita buat salinan data agar tidak merusak data asli
+    const dataUrut = [...dataGlobal].sort((a, b) => {
+        return new Date(b.timestampTanggal) - new Date(a.timestampTanggal);
     });
-    if (document.getElementById("gridStatusTx")) document.getElementById("gridStatusTx").innerHTML = statusHtml;
 
-    const recent = [...dataGlobal].sort((a, b) => {
-    return new Date(b.timestampTanggal) - new Date(a.timestampTanggal);
-    }).slice(0, 5);
-
+    // 3. Tampilkan 5 Kegiatan Terbaru
+    const recent = dataUrut.slice(0, 5);
     const listRecent = document.getElementById("listRecentActivity");
+    
     if (listRecent) {
         listRecent.innerHTML = recent.map(i => {
-            // Ambil jam dan menit dari timestamp
+            // Ambil Jam dan Menit langsung dari timestampTanggal
             const d = new Date(i.timestampTanggal);
             const jam = d.getHours().toString().padStart(2, '0');
             const menit = d.getMinutes().toString().padStart(2, '0');
+            const waktuTampil = `${jam}:${menit}`;
 
             return `
                 <li class="list-group-item d-flex justify-content-between align-items-center py-3">
                     <div style="max-width: 85%;">
                         <div class="fw-bold" style="font-size:14px; color:#003366">${i.nama}</div>
                         <small class="text-muted">
-                            📅 ${formatTanggalIndo(i.timestampTanggal)} • 🕒 ${jam}:${menit}
+                            📅 ${formatTanggalIndo(i.timestampTanggal)} • 🕒 ${waktuTampil} WIB
                         </small>
                         <div class="mt-1 text-dark" style="font-size:13px; line-height:1.4;">
-                            ${i.uraian ? i.uraian.substring(0, 60) : '-'}...
+                            ${i.uraian ? i.uraian.substring(0, 65) : '-'}...
                         </div>
                     </div>
                     <span class="badge bg-primary rounded-pill" style="font-size:10px">${i.shift || '-'}</span>
