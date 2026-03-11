@@ -150,12 +150,12 @@ function prosesFilterDropdown() {
 function tampilkanLogTabel() {
     const n = document.getElementById("filterNama").value;
     const b = document.getElementById("filterBulan").value;
-    const t = document.getElementById("filterTahun").value;
+    const t = document.getElementById("filterTahun") ? document.getElementById("filterTahun").value : "Semua";
     const tBody = document.getElementById("tabelBody");
+    
     if (!tBody) return;
 
-    // 1. Filter Data
-    let filtered = dataGlobal.filter(i => {
+    const filtered = dataGlobal.filter(i => {
         const d = new Date(i.timestampTanggal);
         const matchNama = (n === "Semua" || i.nama === n);
         const matchBulan = (b === "Semua" || d.getMonth().toString() === b);
@@ -470,20 +470,62 @@ function cekStatusTombolPreview() {
     }
 }
 
-// Jalankan ini saat data pertama kali dimuat
+// 1. Fungsi untuk mengisi Filter Tahun secara otomatis
 function inisialisasiFilterTahun() {
     const s = document.getElementById("filterTahun");
     if (!s) return;
     
     const tahunSekarang = new Date().getFullYear();
     let html = `<option value="Semua">Semua Tahun</option>`;
-    
-    // Menampilkan pilihan tahun dari 2024 sampai sekarang
     for (let t = 2024; t <= tahunSekarang; t++) {
         html += `<option value="${t}">${t}</option>`;
     }
     s.innerHTML = html;
-    s.value = "Semua"; // Set default ke Semua agar data langsung muncul
+}
+
+// 2. Fungsi untuk mengisi Filter Nama berdasarkan data yang ada
+function inisialisasiFilterNama() {
+    const s = document.getElementById("filterNama");
+    if (!s || dataGlobal.length === 0) return;
+
+    // Mengambil nama unik dari dataGlobal
+    const daftarNama = [...new Set(dataGlobal.map(i => i.nama))].sort();
+    
+    let html = `<option value="Semua">-- Tampilkan Semua --</option>`;
+    daftarNama.forEach(nama => {
+        html += `<option value="${nama}">${nama}</option>`;
+    });
+    s.innerHTML = html;
+}
+
+async function muatData() {
+    try {
+        const response = await fetch(SCRIPT_URL);
+        const json = await response.json();
+        
+        dataGlobal = json.logs || [];
+        statusGlobal = json.statusTx || [];
+
+        // --- Jalankan fungsi sesuai halaman yang sedang dibuka ---
+        
+        // 1. Isi Sidebar (Wajib untuk semua halaman)
+        if (typeof renderSidebar === "function") renderSidebar();
+
+        // 2. Jika di halaman Beranda
+        if (document.getElementById("listRecentActivity")) {
+            updateBeranda();
+        }
+
+        // 3. Jika di halaman Log Petugas (log-petugas.html)
+        if (document.getElementById("tabelBody")) {
+            inisialisasiFilterTahun(); // Isi tahun dulu
+            inisialisasiFilterNama();  // Isi nama dulu
+            tampilkanLogTabel();       // Baru tampilkan tabel
+        }
+
+    } catch (error) {
+        console.error("Gagal memuat data:", error);
+    }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
