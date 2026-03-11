@@ -90,15 +90,15 @@ function updateBeranda() {
         }).slice(0, 5);
 
         if (document.getElementById("listRecentActivity")) {
-    document.getElementById("listRecentActivity").innerHTML = recent.map(i => `
-        <li class="list-group-item d-flex justify-content-between align-items-center py-3">
-            <div>
-                <div class="fw-bold" style="font-size:14px; color:#003366">${i.nama}</div>
-                <small class="text-muted">📅 ${formatTanggalIndo(i.timestampTanggal)} | 🕒 ${new Date(i.timestampTanggal).getHours().toString().padStart(2, '0')}:${new Date(i.timestampTanggal).getMinutes().toString().padStart(2, '0')}...</small>
-            </div>
-            <span class="badge bg-primary rounded-pill" style="font-size:10px">${i.shift || '-'}</span>
-        </li>`).join('');
-    }
+            document.getElementById("listRecentActivity").innerHTML = recent.map(i => `
+                <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+                    <div>
+                        <div class="fw-bold" style="font-size:14px; color:#003366">${i.nama}</div>
+                        <small class="text-muted">📅 ${formatTanggalIndo(i.timestampTanggal)} | 🕒 ${new Date(i.timestampTanggal).getHours().toString().padStart(2, '0')}:${new Date(i.timestampTanggal).getMinutes().toString().padStart(2, '0')}...</small>
+                    </div>
+                    <span class="badge bg-primary rounded-pill" style="font-size:10px">${i.shift || '-'}</span>
+                </li>`).join('');
+        }
 }
 
 // --- 4. LOGIKA TABEL (log-petugas.html) ---
