@@ -47,38 +47,72 @@ function inisialisasiHalaman() {
 
 // --- 3. LOGIKA DASHBOARD (index.html) ---
 function updateBeranda() {
-    // 1. Update Statistik Kartu (Tetap sama)
-    if (document.getElementById("statTotalLaporan")) document.getElementById("statTotalLaporan").innerText = dataGlobal.length;
+    // --- A. UPDATE KARTU STATISTIK ---
+    if (document.getElementById("statTotalLaporan")) {
+        document.getElementById("statTotalLaporan").innerText = dataGlobal.length;
+    }
+
+    if (document.getElementById("statHariIni")) {
+        const hariIni = new Date().toLocaleDateString('en-CA');
+        const countHariIni = dataGlobal.filter(i => {
+            const tgl = new Date(i.timestampTanggal).toLocaleDateString('en-CA');
+            return tgl === hariIni;
+        }).length;
+        document.getElementById("statHariIni").innerText = countHariIni;
+    }
+
     if (document.getElementById("statTotalPersonel")) {
         const listPetugas = [...new Set(dataGlobal.map(i => i.nama))].filter(n => n);
         document.getElementById("statTotalPersonel").innerText = listPetugas.length;
     }
 
-    // 2. SORTING: Mengurutkan dataGlobal dari yang paling baru (berdasarkan waktu asli)
-    // Kita buat salinan data agar tidak merusak data asli
-    const dataUrut = [...dataGlobal].sort((a, b) => {
-        return new Date(b.timestampTanggal) - new Date(a.timestampTanggal);
-    });
+    // --- B. RENDER STATUS TRANSMISI SITE (MENGEMBALIKAN FITUR YANG HILANG) ---
+    let statusHtml = "";
+    if (statusGlobal.length > 0) {
+        statusGlobal.forEach(item => {
+            let cls = "status-badge-warn"; 
+            let s = item.status ? item.status.toLowerCase().trim() : "";
+            
+            if (s === "normal" || s === "on" || s === "online") cls = "status-badge-on";
+            if (s === "off" || s === "down" || s === "off-air") cls = "status-badge-off";
+            
+            statusHtml += `
+                <div class="col-6 col-md-3">
+                    <div class="site-card p-2 text-center shadow-sm border">
+                        <div class="small fw-bold text-dark">${item.site}</div>
+                        <span class="badge ${cls} w-100 mt-1" style="font-size:10px">${item.status}</span>
+                    </div>
+                </div>`;
+        });
+    }
+    const grid = document.getElementById("gridStatusTx");
+    if (grid) grid.innerHTML = statusHtml || '<p class="text-center w-100">Data Site Kosong</p>';
 
-    // 3. Tampilkan 5 Kegiatan Terbaru
+    // --- C. RENDER 5 KEGIATAN TERBARU (DENGAN PERBAIKAN JAM & SORTING) ---
+    // Sorting: Memaksa urutan berdasarkan waktu terbaru
+    const dataUrut = [...dataGlobal].sort((a, b) => new Date(b.timestampTanggal) - new Date(a.timestampTanggal));
     const recent = dataUrut.slice(0, 5);
+
     const listRecent = document.getElementById("listRecentActivity");
-    
     if (listRecent) {
         listRecent.innerHTML = recent.map(i => {
-            // Ambil Jam dan Menit langsung dari timestampTanggal
+            // Perbaikan Jam: Ambil jam langsung dari data asli tanpa dipotong
             const d = new Date(i.timestampTanggal);
-            const jam = d.getHours().toString().padStart(2, '0');
-            const menit = d.getMinutes().toString().padStart(2, '0');
-            const waktuTampil = `${jam}:${menit}`;
+            
+            // Jika d.getHours() menghasilkan 0 secara terus menerus, 
+            // artinya data dari GAS tidak mengirimkan waktu. 
+            // Kita gunakan toLocaleTimeString untuk format Indonesia (WIB)
+            const jamTampil = d.toLocaleTimeString('id-ID', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                hour12: false 
+            }).replace('.', ':');
 
             return `
                 <li class="list-group-item d-flex justify-content-between align-items-center py-3">
                     <div style="max-width: 85%;">
                         <div class="fw-bold" style="font-size:14px; color:#003366">${i.nama}</div>
-                        <small class="text-muted">
-                            📅 ${formatTanggalIndo(i.timestampTanggal)} • 🕒 ${waktuTampil} WIB
-                        </small>
+                        <small class="text-muted">📅 ${formatTanggalIndo(i.timestampTanggal)} • 🕒 ${jamTampil} WIB</small>
                         <div class="mt-1 text-dark" style="font-size:13px; line-height:1.4;">
                             ${i.uraian ? i.uraian.substring(0, 65) : '-'}...
                         </div>
