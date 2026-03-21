@@ -513,110 +513,34 @@ function inisialisasiFilterNama() {
     s.innerHTML = html;
 }
 
-
-// --- Tambahkan variabel global baru di bagian atas script.js ---
-let downtimeGlobal = []; 
-
-// --- Update fungsi muatData agar menangkap data downtime ---
 async function muatData() {
     try {
-        const response = await fetch(SCRIPT_URL + "?action=ambilData");
+        const response = await fetch(SCRIPT_URL);
         const json = await response.json();
         
         dataGlobal = json.logs || [];
         statusGlobal = json.statusTx || [];
-        downtimeGlobal = json.downtime || []; // Ambil data baru dari GAS
 
+        // --- Jalankan fungsi sesuai halaman yang sedang dibuka ---
+        
+        // 1. Isi Sidebar (Wajib untuk semua halaman)
         if (typeof renderSidebar === "function") renderSidebar();
 
-        // JALANKAN LOGIKA KHUSUS DOWNTIME.HTML
-        if (document.getElementById("tabelDowntimeBody")) {
-            tampilkanTabelDowntime();
-            renderGrafikDowntime();
+        // 2. Jika di halaman Beranda
+        if (document.getElementById("listRecentActivity")) {
+            updateBeranda();
         }
 
-        // Fitur lama tetap jalan (Dashboard & Log Petugas)
-        if (document.getElementById("listRecentActivity")) updateBeranda();
+        // 3. Jika di halaman Log Petugas (log-petugas.html)
         if (document.getElementById("tabelBody")) {
-            inisialisasiFilterTahun();
-            inisialisasiFilterNama();
-            tampilkanLogTabel();
+            inisialisasiFilterTahun(); // Isi tahun dulu
+            inisialisasiFilterNama();  // Isi nama dulu
+            tampilkanLogTabel();       // Baru tampilkan tabel
         }
+
     } catch (error) {
         console.error("Gagal memuat data:", error);
     }
-}
-
-// --- Update renderSidebar untuk menambah menu baru ---
-function renderSidebar() {
-    const container = document.getElementById("sidebar-container");
-    if (!container) return;
-
-    container.innerHTML = `
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="menuSidebar">
-        <div class="offcanvas-header border-bottom">
-            <h5 class="offcanvas-title fw-bold">MENU NAVIGASI</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
-        </div>
-        <div class="offcanvas-body p-0">
-            <div class="list-group list-group-flush">
-                <a href="index.html" class="list-group-item list-group-item-action py-3">🏠 Dashboard Utama</a>
-                <a href="log-petugas.html" class="list-group-item list-group-item-action py-3">📋 Log Kinerja Petugas</a>
-                <a href="downtime.html" class="list-group-item list-group-item-action py-3 bg-light">
-                    📉 Grafik Downtime TX
-                </a>
-            </div>
-        </div>
-    </div>`;
-}
-
-function tampilkanTabelDowntime() {
-    const tBody = document.getElementById("tabelDowntimeBody");
-    if (!tBody || downtimeGlobal.length === 0) return;
-
-    // Urutkan berdasarkan tanggal terbaru
-    const sorted = [...downtimeGlobal].sort((a,b) => new Date(b.tanggal) - new Date(a.tanggal));
-
-    tBody.innerHTML = sorted.map(i => `
-        <tr>
-            <td class="text-center">${formatTanggalIndo(i.tanggal)}</td>
-            <td class="fw-bold">${i.site}</td>
-            <td class="text-center text-danger fw-bold">${i.durasi} Menit</td>
-            <td>${i.penyebab || '-'}</td>
-            <td>${i.keterangan || '-'}</td>
-        </tr>
-    `).join('');
-}
-
-function renderGrafikDowntime() {
-    const ctx = document.getElementById('chartDowntime');
-    if (!ctx) return;
-
-    const labels = [...new Set(downtimeGlobal.map(i => i.site))];
-    const durasiPerSite = labels.map(site => {
-        return downtimeGlobal
-            .filter(i => i.site === site)
-            .reduce((acc, curr) => acc + (parseFloat(curr.durasi) || 0), 0);
-    });
-
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Total Off-Air (Menit)',
-                data: durasiPerSite,
-                backgroundColor: 'rgba(220, 53, 69, 0.7)',
-                borderColor: '#dc3545',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            indexAxis: 'y', // Grafik horizontal agar nama site tidak bertumpuk
-            responsive: true,
-            plugins: { legend: { display: false } }
-        }
-    });
 }
 
 document.addEventListener("DOMContentLoaded", () => {
