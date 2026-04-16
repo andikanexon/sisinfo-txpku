@@ -317,12 +317,12 @@ function renderSidebar() {
 
     let sidebarHTML = `
     <div class="offcanvas offcanvas-start text-white" tabindex="-1" id="menuSidebar">
-      <div class="offcanvas-header"><h5 class="offcanvas-title">Menu E-Kinerja</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button></div>
+      <div class="offcanvas-header"><h5 class="offcanvas-title">Menu</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button></div>
       <div class="offcanvas-body p-0 mt-3">
         <div class="list-group list-group-flush">
           <a href="index.html" class="menu-modern ${page === 'index.html' ? 'active' : ''}">🏠 Dashboard</a>
           <a href="log-petugas.html" class="menu-modern ${page === 'log-petugas.html' ? 'active' : ''}">📋 Log Kinerja</a>
-          <a href="downtime.html" class="menu-modern ${page === 'downtime.html' ? 'active' : ''}">📉 Downtime TX</a>
+          <a href="downtime.html" class="menu-modern ${page === 'downtime.html' ? 'active' : ''}">📉 Downtime Transmisi TVRI Riau</a>
           <a href="statistik.html" class="menu-modern ${page === 'statistik.html' ? 'active' : ''}">📈 Statistik</a>
           <hr class="mx-3 my-2 opacity-10">
           <a href="#" data-bs-toggle="modal" data-bs-target="#profilModal" onclick="isiDataProfil()" class="menu-modern">👤 Profil User</a>
