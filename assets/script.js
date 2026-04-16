@@ -145,11 +145,18 @@ function tampilkanLogTabel() {
     if (!tBody) return;
 
     const filtered = dataGlobal.filter(i => {
-        const d = new Date(i.timestampTanggal);
-        return (n === "Semua" || i.nama === n) && 
-               (b === "Semua" || d.getMonth().toString() === b) && 
-               (t === "Semua" || d.getFullYear().toString() === t);
-    }).sort((a, b) => new Date(b.timestampTanggal) - new Date(a.timestampTanggal));
+        // FILTER menggunakan timestampFilter (Tanggal Kegiatan/row[5])
+        const d = new Date(i.timestampFilter); 
+        
+        const matchNama = (fNama === "Semua" || i.nama === fNama);
+        const matchBulan = (fBulan === "Semua" || d.getMonth().toString() === fBulan);
+        const matchTahun = (fTahun === "Semua" || d.getFullYear().toString() === fTahun);
+
+        return matchNama && matchBulan && matchTahun;
+    });
+
+    // SORTING menggunakan timestampSort (Waktu Input/row[0]) agar tetap rapi
+    const sorted = filtered.sort((a, b) => b.timestampSort - a.timestampSort);
 
     tBody.innerHTML = filtered.map(i => {
         let docs = "";
