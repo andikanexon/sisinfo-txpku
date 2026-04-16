@@ -322,7 +322,7 @@ function renderSidebar() {
         <div class="list-group list-group-flush">
           <a href="index.html" class="menu-modern ${page === 'index.html' ? 'active' : ''}">🏠 Dashboard</a>
           <a href="log-petugas.html" class="menu-modern ${page === 'log-petugas.html' ? 'active' : ''}">📋 Log Kinerja</a>
-          <a href="downtime.html" class="menu-modern ${page === 'downtime.html' ? 'active' : ''}">📉 Downtime Transmisi TVRI Riau</a>
+          <a href="downtime.html" class="menu-modern ${page === 'downtime.html' ? 'active' : ''}">📉 Downtime Transmisi</a>
           <a href="statistik.html" class="menu-modern ${page === 'statistik.html' ? 'active' : ''}">📈 Statistik</a>
           <hr class="mx-3 my-2 opacity-10">
           <a href="#" data-bs-toggle="modal" data-bs-target="#profilModal" onclick="isiDataProfil()" class="menu-modern">👤 Profil User</a>
