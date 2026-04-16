@@ -138,42 +138,41 @@ function inisialisasiFilterTahun() {
 }
 
 function tampilkanLogTabel() {
-    const n = document.getElementById("filterNama").value;
-    const b = document.getElementById("filterBulan").value;
-    const t = document.getElementById("filterTahun") ? document.getElementById("filterTahun").value : "Semua";
+    const fNama = document.getElementById("filterNama").value;
+    const fBulan = document.getElementById("filterBulan").value;
+    const fTahun = document.getElementById("filterTahun") ? document.getElementById("filterTahun").value : "Semua";
+    
     const tBody = document.getElementById("tabelBody");
     if (!tBody) return;
 
     const filtered = dataGlobal.filter(i => {
-        // FILTER menggunakan timestampFilter (Tanggal Kegiatan/row[5])
-        const d = new Date(i.timestampFilter); 
-        
+        const d = new Date(i.timestampTanggal); 
         const matchNama = (fNama === "Semua" || i.nama === fNama);
         const matchBulan = (fBulan === "Semua" || d.getMonth().toString() === fBulan);
         const matchTahun = (fTahun === "Semua" || d.getFullYear().toString() === fTahun);
-
         return matchNama && matchBulan && matchTahun;
     });
 
-    // SORTING menggunakan timestampSort (Waktu Input/row[0]) agar tetap rapi
-    const sorted = filtered.sort((a, b) => b.timestampSort - a.timestampSort);
+    // Sortir: Terakhir diisi form (Row 0) berada di paling atas
+    const sorted = filtered.sort((a, b) => b.timestampAsli - a.timestampAsli);
 
-    tBody.innerHTML = filtered.map(i => {
+    tBody.innerHTML = sorted.map(i => {
         let docs = "";
-        if (i.link1 && i.link1.trim().startsWith("http")) docs += `<a href="${i.link1}" target="_blank" class="btn btn-primary btn-eviden me-1">E1</a>`;
-        if (i.link2 && i.link2.trim().startsWith("http")) docs += `<a href="${i.link2}" target="_blank" class="btn btn-info btn-eviden text-white me-1">E2</a>`;
-        if (i.link3 && i.link3.trim().startsWith("http")) docs += `<a href="${i.link3}" target="_blank" class="btn btn-secondary btn-eviden">E3</a>`;
+        if (i.link1 && i.link1.trim().startsWith("http")) docs += `<a href="${i.link1}" target="_blank" class="btn btn-primary btn-eviden me-1" style="font-size:10px">E1</a>`;
+        if (i.link2 && i.link2.trim().startsWith("http")) docs += `<a href="${i.link2}" target="_blank" class="btn btn-info btn-eviden text-white me-1" style="font-size:10px">E2</a>`;
+        if (i.link3 && i.link3.trim().startsWith("http")) docs += `<a href="${i.link3}" target="_blank" class="btn btn-secondary btn-eviden" style="font-size:10px">E3</a>`;
+        
         return `<tr>
-            <td class="text-center">${formatTanggalIndo(i.tanggal)}</td>
-            <td class="text-center">${i.nama}</td>
+            <td class="text-center" style="white-space:nowrap;">${i.tanggal}</td>
+            <td><strong>${i.nama}</strong></td>
             <td class="text-center">${i.shift || '-'}</td>
-            <td class="text-center small">${i.mulai} - ${i.selesai}</td> 
+            <td class="text-center" style="white-space:nowrap;">${i.waktu}</td>
             <td>${i.sasaran || ''}</td>
             <td>${i.uraian || ''}</td>
             <td class="text-center">${docs || '-'}</td>
             <td>${i.keterangan || '-'}</td>
         </tr>`;
-    }).join('') || '<tr><td colspan="8" class="text-center py-4">Data tidak ditemukan</td></tr>';
+    }).join('') || '<tr><td colspan="8" class="text-center py-4">Tidak ada data untuk periode ini.</td></tr>';
 }
 
 // --- 5. DOWNTIME LOGIC ---
