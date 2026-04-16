@@ -233,7 +233,7 @@ function renderGrafikDowntime() {
         data: {
             labels: labelsSorted, // Menggunakan label yang sudah urut
             datasets: [{
-                label: 'Frekuensi Gangguan (Kali)',
+                label: 'Frekuensi Downtime (Kali)',
                 data: valuesSorted, // Menggunakan nilai yang sudah urut
                 backgroundColor: '#dc3545',
                 borderRadius: 5
