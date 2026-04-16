@@ -105,7 +105,7 @@ function updateBeranda() {
             <li class="list-group-item d-flex justify-content-between align-items-center py-3">
                 <div style="max-width: 85%;">
                     <div class="fw-bold" style="font-size:14px; color:#003366">${i.nama}</div>
-                    <small class="text-muted">📅 ${formatTanggalIndo(i.timestampTanggal)} • 🕒 ${i.mulai} - ${i.selesai}</small>
+                    <small class="text-muted">📅 ${i.tanggal}</small>
                     <div class="mt-1 text-dark" style="font-size:13px; line-height:1.4;">
                         ${i.uraian ? i.uraian.substring(0, 65) : '-'}...
                     </div>
