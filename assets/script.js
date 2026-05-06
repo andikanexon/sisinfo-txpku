@@ -41,12 +41,26 @@ async function muatDataOtomatis() {
 function inisialisasiHalaman() {
     if (document.getElementById("gridStatusTx")) updateBeranda();
     
-    if (document.getElementById("tabelBody")) {
+   if (document.getElementById("tabelBody")) {
+    const sectionKonten = document.getElementById("sectionLogTabel");
+    const sectionDitolak = document.getElementById("aksesDitolak");
+
+    // CEK STATUS LOGIN
+    if (!isLoggedIn) {
+        // Jika belum login: Sembunyikan tabel, tampilkan pesan kunci
+        if (sectionKonten) sectionKonten.classList.add("d-none");
+        if (sectionDitolak) sectionDitolak.classList.remove("d-none");
+    } else {
+        // Jika sudah login: Tampilkan tabel, jalankan fungsi data
+        if (sectionKonten) sectionKonten.classList.remove("d-none");
+        if (sectionDitolak) sectionDitolak.classList.add("d-none");
+        
         prosesFilterDropdown(); 
         inisialisasiFilterTahun(); 
         tampilkanLogTabel();
         cekStatusTombolPreview();
     }
+}
     
     if (document.getElementById("grafikPegawai")) renderGrafik();
 
@@ -278,14 +292,35 @@ function renderSidebar() {
     const page = window.location.pathname.split("/").pop() || "index.html";
 
     let sidebarHTML = `
-    <div class="offcanvas offcanvas-start text-white" tabindex="-1" id="menuSidebar">
-      <div class="offcanvas-header"><h5 class="offcanvas-title">Menu</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button></div>
+    <div class="offcanvas offcanvas-start text-white" tabindex="-1" id="menuSidebar" style="background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);">
+      <div class="offcanvas-header border-bottom border-secondary">
+        <h5 class="offcanvas-title fw-bold">MENU NAVIGASI</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+      </div>
       <div class="offcanvas-body p-0 mt-3">
         <div class="list-group list-group-flush">
-          <a href="index.html" class="menu-modern ${page === 'index.html' ? 'active' : ''}">🏠 Dashboard</a>
+          <a href="index.html" class="menu-modern ${page === 'index.html' ? 'active' : ''}">🏠 Statistik Utama</a>
+          
+          <!-- DROPDOWN INPUT FORM -->
+          <div class="nav-item mx-3 my-1">
+            <a class="menu-modern w-100 justify-content-between d-flex" data-bs-toggle="collapse" href="#menuForms" role="button">
+              <span><i class="bi bi-pencil-square me-2 text-danger"></i> Input Form</span>
+              <i class="bi bi-chevron-down small"></i>
+            </a>
+            <div class="collapse ps-4" id="menuForms">
+              <a href="URL_FORM_1" target="_blank" class="text-decoration-none text-muted d-block py-2 small border-bottom border-secondary"><i class="bi bi-file-text me-2"></i> Log Harian</a>
+              <a href="URL_FORM_2" target="_blank" class="text-decoration-none text-muted d-block py-2 small border-bottom border-secondary"><i class="bi bi-broadcast me-2"></i> Laporan Downtime</a>
+              <a href="URL_FORM_3" target="_blank" class="text-decoration-none text-muted d-block py-2 small border-bottom border-secondary"><i class="bi bi-fuel-pump me-2"></i> Laporan BBM</a>
+              <a href="URL_FORM_4" target="_blank" class="text-decoration-none text-muted d-block py-2 small border-bottom border-secondary"><i class="bi bi-check-circle me-2"></i> Redundansi</a>
+              <a href="URL_FORM_5" target="_blank" class="text-decoration-none text-muted d-block py-2 small border-bottom border-secondary"><i class="bi bi-box-seam me-2"></i> Stok Sparepart</a>
+              <a href="URL_FORM_6" target="_blank" class="text-decoration-none text-muted d-block py-2 small"><i class="bi bi-person-badge me-2"></i> Tamu/Vendor</a>
+            </div>
+          </div>
+
           <a href="log-petugas.html" class="menu-modern ${page === 'log-petugas.html' ? 'active' : ''}">📋 Log Kinerja</a>
           <a href="downtime.html" class="menu-modern ${page === 'downtime.html' ? 'active' : ''}">📉 Downtime Transmisi</a>
           <a href="statistik.html" class="menu-modern ${page === 'statistik.html' ? 'active' : ''}">📈 Statistik</a>
+          
           <hr class="mx-3 my-2 opacity-10">
           <a href="#" data-bs-toggle="modal" data-bs-target="#profilModal" onclick="isiDataProfil()" class="menu-modern">👤 Profil User</a>
           <a href="#" ${isLoggedIn ? 'onclick="logoutAdmin()"' : 'data-bs-toggle="modal" data-bs-target="#loginModal"'} class="menu-modern">
@@ -342,12 +377,14 @@ function prosesLogin() {
     if (user === "Admin" && pass === "txpku1") {
         isLoggedIn = true;
         localStorage.setItem("isLoggedIn", "true");
+        
         const modalElement = document.getElementById('loginModal');
         const modal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
         modal.hide();
-        renderSidebar();
-        if (document.getElementById("btnPreview")) cekStatusTombolPreview();
+        
         alert("Otorisasi Berhasil!");
+        // Refresh halaman agar logika pengecekan login berjalan ulang
+        location.reload(); 
     } else {
         alert("Username/Password Salah!");
     }

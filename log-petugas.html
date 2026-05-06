@@ -37,6 +37,16 @@
       </div>
     </div>
 
+  <div id="aksesDitolak" class="text-center py-5 d-none">
+  <div class="card shadow-sm border-0 p-5 mx-auto" style="max-width: 500px;">
+    <h1 class="display-1 text-danger mb-4">🔐</h1>
+    <h4 class="fw-bold">Akses Terbatas</h4>
+    <p class="text-muted">Halaman Log Kinerja hanya dapat diakses oleh Admin atau Petugas yang terverifikasi.</p>
+    <button class="btn btn-primary fw-bold" data-bs-toggle="modal" data-bs-target="#loginModal">
+      LOGIN SEKARANG
+    </button>
+  </div>
+</div>
     <div id="sectionLogTabel">
       <div class="row mb-3 align-items-end g-2">
   <div class="col-md-4">
@@ -90,22 +100,6 @@
             <tr><td colspan="8" class="text-center py-5">Memuat data dari server...</td></tr>
           </tbody>
         </table>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content border-0 shadow">
-        <div class="modal-header text-white" style="background-color: #003366;">
-          <h5 class="modal-title">🔐 Login Admin</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body p-4">
-          <input type="text" id="inputUser" class="form-control mb-2" placeholder="Username">
-          <input type="password" id="inputPass" class="form-control mb-3" placeholder="Password">
-          <button onclick="prosesLogin()" class="btn btn-primary w-100">MASUK</button>
-        </div>
       </div>
     </div>
   </div>
