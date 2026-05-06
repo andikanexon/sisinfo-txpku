@@ -187,82 +187,39 @@ function inisialisasiFilterDowntime() {
 
 function renderGrafikDowntime() {
     const canvas = document.getElementById('chartDowntime');
-    if (!canvas) return;
+    if (!canvas || !downtimeGlobal.length) return;
 
-    if (daftarTxGlobal.length === 0) return;
-
-    // 1. Inisialisasi data awal (0) untuk semua site
+    const b = document.getElementById("filterDTBulan").value;
+    const t = document.getElementById("filterDTTahun").value;
+    
     const dataMap = {};
-    daftarTxGlobal.forEach(site => { dataMap[site.trim()] = 0; });
+    daftarTxGlobal.forEach(s => dataMap[s] = 0);
 
-    const bulan = document.getElementById("filterDTBulan").value;
-    const tahun = document.getElementById("filterDTTahun").value;
-
+    // FILTERING: Pastikan menggunakan tanggalRaw
     const filtered = downtimeGlobal.filter(i => {
-        const d = new Date(i.tanggal);
-        return (bulan === "Semua" || d.getMonth().toString() === bulan) &&
-               (tahun === "Semua" || d.getFullYear().toString() === tahun);
+        const d = new Date(i.tanggalRaw); // Merujuk ke Tanggal Kejadian (Kolom C)
+        const matchBulan = (b === "Semua" || d.getMonth().toString() === b);
+        const matchTahun = (t === "Semua" || d.getFullYear().toString() === t);
+        return matchBulan && matchTahun;
     });
 
-    // 2. Hitung jumlah kejadian
     filtered.forEach(i => {
-        const namaSite = i.site ? i.site.trim() : "";
-        if (dataMap.hasOwnProperty(namaSite)) {
-            dataMap[namaSite] += 1;
-        }
+        if (dataMap.hasOwnProperty(i.site)) dataMap[i.site] += 1;
     });
 
-    // --- 3. LOGIKA SORTIR (TERTINGGI KE TERENDAH) ---
-    // Ubah object dataMap menjadi array agar bisa disortir
-    let arrayData = Object.keys(dataMap).map(key => {
-        return { site: key, jumlah: dataMap[key] };
-    });
-
-    // Sortir array berdasarkan jumlah (descending)
-    arrayData.sort((a, b) => b.jumlah - a.jumlah);
-
-    // Ambil kembali label dan nilainya setelah disortir
-    const labelsSorted = arrayData.map(item => item.site);
-    const valuesSorted = arrayData.map(item => item.jumlah);
-    // ------------------------------------------------
+    const sortedArray = Object.keys(dataMap).map(k => ({s: k, v: dataMap[k]})).sort((x, y) => y.v - x.v);
 
     if (chartDowntimeInstance) chartDowntimeInstance.destroy();
-    
     chartDowntimeInstance = new Chart(canvas.getContext('2d'), {
         type: 'bar',
         data: {
-            labels: labelsSorted, // Menggunakan label yang sudah urut
-            datasets: [{
-                label: 'Frekuensi Downtime (Kali)',
-                data: valuesSorted, // Menggunakan nilai yang sudah urut
-                backgroundColor: '#dc3545',
-                borderRadius: 5
-            }]
+            labels: sortedArray.map(i => i.s),
+            datasets: [{ label: 'Jumlah Gangguan', data: sortedArray.map(i => i.v), backgroundColor: '#d9534f' }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            scales: {
-                y: { 
-                    beginAtZero: true,
-                    suggestedMax: 12, // Skala minimal 12, bertambah jika data > 12
-                    ticks: { stepSize: 1 },
-                    title: { 
-                        display: true, 
-                        text: 'Jumlah Downtime', 
-                        font: { weight: 'bold', size: 14 } 
-                    }
-                },
-                x: { 
-                    title: { 
-                        display: true, 
-                        text: 'Satuan Transmisi', 
-                        font: { weight: 'bold', size: 14 } 
-                    },
-                    ticks: { maxRotation: 45, minRotation: 45, autoSkip: false }
-                }
-            },
-            plugins: { legend: { display: false } }
+            scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
         }
     });
 }
@@ -271,23 +228,22 @@ function tampilkanTabelDowntime() {
     const tBody = document.getElementById("tabelDowntimeBody");
     if (!tBody) return;
 
-    // 1. Ambil nilai filter
+    // 1. Ambil nilai filter dari dropdown yang ada di downtime.html
     const b = document.getElementById("filterDTBulan").value;
     const t = document.getElementById("filterDTTahun").value;
 
-    // 2. Filter data dari downtimeGlobal
+    // 2. Filter data berdasarkan tanggal kejadian (tanggalRaw), bukan waktu kirim form
     const filtered = downtimeGlobal.filter(i => {
-        // Kita gunakan tanggalRaw (timestamp) agar filter akurat
-        const d = new Date(i.tanggalRaw);
+        const d = new Date(i.tanggalRaw); // Pastikan ini merujuk ke Kolom C Spreadsheet
         const matchBulan = (b === "Semua" || d.getMonth().toString() === b);
         const matchTahun = (t === "Semua" || d.getFullYear().toString() === t);
         return matchBulan && matchTahun;
     });
 
-    // 3. Sortir: Tanggal terbaru di atas
+    // 3. Urutkan agar data paling baru (Mei) muncul di paling atas
     const sorted = filtered.sort((x, y) => y.tanggalRaw - x.tanggalRaw);
 
-    // 4. Render ke Tabel
+    // 4. Render ke tabel
     tBody.innerHTML = sorted.map(i => {
         let ev = "";
         if (i.bukti1 && i.bukti1.includes("http")) {
@@ -307,7 +263,7 @@ function tampilkanTabelDowntime() {
             <td class="text-center">${i.petugas}</td>
             <td class="text-center">${ev || '-'}</td>
         </tr>`;
-    }).join('') || '<tr><td colspan="7" class="text-center py-4 text-muted">⚠️ Tidak ada data downtime pada periode ini.</td></tr>';
+    }).join('') || '<tr><td colspan="7" class="text-center py-4 text-muted">⚠️ Tidak ada data gangguan pada periode ini.</td></tr>';
 }
 
 function updateHalamanDowntime() {
