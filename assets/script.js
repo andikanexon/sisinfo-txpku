@@ -270,41 +270,32 @@ function renderGrafikPetugasDowntime() {
     });
 
     // Urutkan nama berdasarkan jumlah laporan terbanyak
-    const sortedLabels = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
+    const sortedLabels = Object.keys(counts).sort(); 
     const sortedValues = sortedLabels.map(label => counts[label]);
 
-    // 3. Render Grafik GARIS (Line Chart)
     if (chartPetugasDTInstance) chartPetugasDTInstance.destroy();
     chartPetugasDTInstance = new Chart(canvas.getContext('2d'), {
-        type: 'line', // Berubah menjadi grafik garis
+        type: 'line', 
         data: {
             labels: sortedLabels,
             datasets: [{
                 label: 'Kontribusi Laporan',
                 data: sortedValues,
-                borderColor: '#003366', // Warna garis Biru TVRI[cite: 7]
+                borderColor: '#003366', // Biru TVRI[cite: 7]
                 backgroundColor: 'rgba(0, 51, 102, 0.1)',
                 borderWidth: 3,
-                fill: true, // Memberikan warna tipis di bawah garis
-                tension: 0.1, // Membuat garis lurus (0 = kaku, 0.4 = melengkung)
+                fill: true,
+                tension: 0.1, 
                 pointRadius: 5,
-                pointBackgroundColor: '#d9534f' // Titik berwarna merah[cite: 7]
+                pointBackgroundColor: '#d9534f' // Merah[cite: 7]
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
             scales: {
-                y: { 
-                    beginAtZero: true, 
-                    ticks: { stepSize: 1 } 
-                },
-                x: {
-                    ticks: { autoSkip: false } // Pastikan semua nama petugas muncul
-                }
-            },
-            plugins: {
-                legend: { display: true }
+                y: { beginAtZero: true, ticks: { stepSize: 1 } },
+                x: { ticks: { autoSkip: false } }
             }
         }
     });
