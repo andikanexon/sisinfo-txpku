@@ -17,7 +17,7 @@
       </button>
       <div class="navbar-brand d-flex align-items-center m-0 p-0">
         <img src="https://upload.wikimedia.org/wikipedia/commons/e/e0/TVRI_Riau.svg" alt="Logo TVRI" style="height: 30px;" class="me-2">
-        <span class="mb-0 h5 fw-bold text-dark text-wrap">Sistem Informasi Satuan Transmisi Pekanbaru</span>
+        <span class="mb-0 h5 fw-bold text-dark text-wrap">Sistem Informasi Transmisi TVRI Riau</span>
       </div>
     </div>
   </nav>
@@ -59,10 +59,40 @@
       </div>
     </div>
 
+    <!-- KONTINER TAB (SUB-MENU) -->
+<ul class="nav nav-tabs mb-3 border-0" id="downtimeTabs" role="tablist">
+  <li class="nav-item">
+    <button class="nav-link active fw-bold text-dark border-0 border-bottom border-3 border-danger" id="tab-transmisi" data-bs-toggle="tab" data-bs-target="#viewTransmisi" type="button" role="tab">
+      📊 Grafik Per Transmisi
+    </button>
+  </li>
+  <li class="nav-item">
+    <button class="nav-link fw-bold text-dark border-0" id="tab-petugas" data-bs-toggle="tab" data-bs-target="#viewPetugas" type="button" role="tab">
+      👷 Grafik Laporan Petugas
+    </button>
+  </li>
+</ul>
+
+<!-- ISI TAB GRAFIK -->
+<div class="tab-content">
+  <!-- Sub-Menu 1: Grafik Transmisi -->
+  <div class="tab-pane fade show active" id="viewTransmisi" role="tabpanel">
     <div class="card shadow-sm border-0 p-3 mb-4">
-      <div style="height: 450px;"> <canvas id="chartDowntime"></canvas>
+      <div style="height: 450px;">
+        <canvas id="chartDowntime"></canvas>
       </div>
     </div>
+  </div>
+
+  <!-- Sub-Menu 2: Grafik Petugas -->
+  <div class="tab-pane fade" id="viewPetugas" role="tabpanel">
+    <div class="card shadow-sm border-0 p-3 mb-4">
+      <div style="height: 450px;">
+        <canvas id="chartPetugasDowntime"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
 
     <div class="table-responsive bg-white rounded shadow-sm border">
       <table class="table table-hover table-bordered mb-0" style="font-size: 13px;">

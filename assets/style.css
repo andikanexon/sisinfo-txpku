@@ -179,3 +179,14 @@ body {
     background: rgba(255, 193, 7, 0.2) !important; /* Kuning TVRI */
     border-left: 4px solid #ffc107 !important;
 }
+
+.nav-tabs .nav-link {
+    color: #6c757d;
+    transition: 0.3s;
+}
+
+.nav-tabs .nav-link.active {
+    color: #d9534f !important; /* Warna merah khas downtime */
+    background-color: transparent !important;
+    border-bottom: 3px solid #d9534f !important;
+}

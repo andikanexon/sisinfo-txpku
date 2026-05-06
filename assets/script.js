@@ -5,7 +5,8 @@ let dataGlobal = [];
 let statusGlobal = []; 
 let downtimeGlobal = []; 
 let grafikInstance = null;
-let chartDowntimeInstance = null; 
+let chartDowntimeInstance = null;
+let chartPetugasDTInstance = null; 
 let currentSlide = 'status';
 let isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
 
@@ -238,6 +239,77 @@ function renderGrafikDowntime() {
     });
 }
 
+function renderGrafikPetugasDowntime() {
+    const canvas = document.getElementById('chartPetugasDowntime');
+    if (!canvas || !downtimeGlobal.length) return;
+
+    const b = document.getElementById("filterDTBulan").value;
+    const t = document.getElementById("filterDTTahun").value;
+    
+    // 1. Filter data berdasarkan periode
+    const filtered = downtimeGlobal.filter(i => {
+        const d = new Date(i.tanggalRaw);
+        const matchBulan = (b === "Semua" || d.getMonth().toString() === b);
+        const matchTahun = (t === "Semua" || d.getFullYear().toString() === t);
+        return matchBulan && matchTahun;
+    });
+
+    // 2. Hitung laporan per petugas (Logika pecah nama)
+    const counts = {};
+    filtered.forEach(i => {
+        if (i.petugas) {
+            // Memisahkan nama jika dipisahkan oleh koma (,) atau kata "dan"
+            const listNama = i.petugas.split(/[,&]| dan /); 
+            listNama.forEach(nama => {
+                const namaBersih = nama.trim();
+                if (namaBersih) {
+                    counts[namaBersih] = (counts[namaBersih] || 0) + 1;
+                }
+            });
+        }
+    });
+
+    // Urutkan nama berdasarkan jumlah laporan terbanyak
+    const sortedLabels = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
+    const sortedValues = sortedLabels.map(label => counts[label]);
+
+    // 3. Render Grafik GARIS (Line Chart)
+    if (chartPetugasDTInstance) chartPetugasDTInstance.destroy();
+    chartPetugasDTInstance = new Chart(canvas.getContext('2d'), {
+        type: 'line', // Berubah menjadi grafik garis
+        data: {
+            labels: sortedLabels,
+            datasets: [{
+                label: 'Kontribusi Laporan',
+                data: sortedValues,
+                borderColor: '#003366', // Warna garis Biru TVRI[cite: 7]
+                backgroundColor: 'rgba(0, 51, 102, 0.1)',
+                borderWidth: 3,
+                fill: true, // Memberikan warna tipis di bawah garis
+                tension: 0.1, // Membuat garis lurus (0 = kaku, 0.4 = melengkung)
+                pointRadius: 5,
+                pointBackgroundColor: '#d9534f' // Titik berwarna merah[cite: 7]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: { 
+                    beginAtZero: true, 
+                    ticks: { stepSize: 1 } 
+                },
+                x: {
+                    ticks: { autoSkip: false } // Pastikan semua nama petugas muncul
+                }
+            },
+            plugins: {
+                legend: { display: true }
+            }
+        }
+    });
+}
+
 function tampilkanTabelDowntime() {
     const tBody = document.getElementById("tabelDowntimeBody");
     if (!tBody) return;
@@ -282,6 +354,7 @@ function tampilkanTabelDowntime() {
 
 function updateHalamanDowntime() {
     renderGrafikDowntime();   // Update Grafiknya
+    renderGrafikPetugasDowntime();
     tampilkanTabelDowntime(); // Update Tabelnya
 }
 
