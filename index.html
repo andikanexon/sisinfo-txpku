@@ -46,7 +46,7 @@
     <div class="row g-3 mb-4">
       <div class="col-6 col-md-3">
         <div class="card border-0 shadow-sm p-3 text-center stat-card h-100">
-          <small class="text-muted fw-bold">TOTAL LAPORAN</small>
+          <small class="text-muted fw-bold">TOTAL LAPORAN INDIVIDU</small>
           <h3 class="fw-bold mb-0 text-primary" id="statTotalLaporan">0</h3>
         </div>
       </div>
@@ -71,25 +71,36 @@
     </div>
 
     <div class="fade-container">
-      <div id="itemStatus" class="fade-item active">
-        <div class="card border-0 shadow-sm mb-4">
-          <div class="card-header bg-white fw-bold border-0 pt-3">📡 Status Transmisi</div>
-          <div class="card-body">
-            <div class="row g-2" id="gridStatusTx"></div>
-          </div>
-        </div>
-      </div>
-
-      <div id="itemRecent" class="fade-item">
-        <div class="card border-0 shadow-sm mb-4">
-          <div class="card-header bg-white fw-bold border-0 pt-3">🚀 5 Kegiatan Terbaru</div>
-          <div class="card-body p-0">
-            <ul class="list-group list-group-flush" id="listRecentActivity"></ul>
-          </div>
-        </div>
+  <div id="itemStatus" class="fade-item active">
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="card-header bg-white fw-bold border-0 pt-3">📡 Status Transmisi</div>
+      <div class="card-body">
+        <div class="row g-2" id="gridStatusTx"></div>
       </div>
     </div>
   </div>
+
+  <div id="itemRecent" class="fade-item">
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="card-header bg-white fw-bold border-0 pt-3">🚀 5 Kegiatan Terbaru</div>
+      <div class="card-body p-0">
+        <ul class="list-group list-group-flush" id="listRecentActivity"></ul>
+      </div>
+    </div>
+  </div>
+
+  <div id="itemDowntimeRecent" class="fade-item">
+  <div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white fw-bold border-0 pt-3 d-flex justify-content-between align-items-center">
+      <span>📉 5 Laporan Downtime Terakhir</span>
+      <a href="downtime.html" class="text-decoration-none small text-danger">Lihat Semua →</a>
+    </div>
+    <div class="card-body p-0">
+      <ul class="list-group list-group-flush" id="listDowntimeRecent">
+        </ul>
+    </div>
+  </div>
+</div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="assets/script.js"></script>

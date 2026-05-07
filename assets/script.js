@@ -42,7 +42,9 @@ async function muatDataOtomatis() {
 
 function inisialisasiHalaman() {
     if (document.getElementById("gridStatusTx")) updateBeranda();
-    
+
+        renderDowntimeTerbaru();
+
    if (document.getElementById("tabelBody")) {
     const sectionKonten = document.getElementById("sectionLogTabel");
     const sectionDitolak = document.getElementById("aksesDitolak");
@@ -64,7 +66,21 @@ function inisialisasiHalaman() {
     }
 }
     
-    if (document.getElementById("grafikPegawai")) renderGrafik();
+    if (document.getElementById("grafikPegawai")) {
+    const sectionKonten = document.getElementById("kontenStatistik");
+    const sectionDitolak = document.getElementById("aksesDitolak");
+
+    if (!isLoggedIn) {
+        // Jika belum login: Sembunyikan grafik, tampilkan pesan kunci
+        if (sectionKonten) sectionKonten.classList.add("d-none");
+        if (sectionDitolak) sectionDitolak.classList.remove("d-none");
+    } else {
+        // Jika sudah login: Tampilkan grafik dan jalankan render
+        if (sectionKonten) sectionKonten.classList.remove("d-none");
+        if (sectionDitolak) sectionDitolak.classList.add("d-none");
+        renderGrafik();
+    }
+}
 
     if (document.getElementById("chartDowntime")) {
         inisialisasiFilterDowntime();
@@ -129,6 +145,32 @@ function updateBeranda() {
                 <span class="badge bg-primary rounded-pill" style="font-size:10px">${i.shift || '-'}</span>
             </li>`).join('') || '<li class="list-group-item text-center">Belum ada aktivitas</li>';
     }
+}
+
+function renderDowntimeTerbaru() {
+    const listContainer = document.getElementById("listDowntimeRecent");
+    if (!listContainer || !downtimeGlobal.length) return;
+
+    // Ambil 5 data downtime terbaru berdasarkan urutan waktu kejadian
+    const latestDT = [...downtimeGlobal]
+        .sort((a, b) => b.tanggalRaw - a.tanggalRaw)
+        .slice(0, 5);
+
+    listContainer.innerHTML = latestDT.map(i => `
+        <li class="list-group-item border-0 py-3 border-bottom">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <div class="fw-bold text-dark" style="font-size: 14px;">${i.site}</div>
+              <small class="text-muted">
+                ${i.tanggal} • <span class="text-danger fw-bold">${formatDurasi(i.durasi)}</span>
+              </small>
+            </div>
+          </div>
+          <div class="mt-1 small text-secondary text-truncate" style="max-width: 100%; font-style: italic;">
+            "${i.keterangan}"
+          </div>
+        </li>
+    `).join('');
 }
 
 // --- 4. LOGIKA TABEL & FILTER ---
@@ -600,14 +642,27 @@ function formatTanggalIndo(ts) {
 function startAutoToggle() {
     const sEl = document.getElementById('itemStatus');
     const rEl = document.getElementById('itemRecent');
-    if (!sEl || !rEl) return;
-    setInterval(() => {
-        if (currentSlide === 'status') {
-            sEl.classList.remove('active'); rEl.classList.add('active'); currentSlide = 'recent';
-        } else {
-            rEl.classList.remove('active'); sEl.classList.add('active'); currentSlide = 'status';
-        }
-    }, 8000);
+    const dEl = document.getElementById('itemDowntimeRecent');
+    
+    // Pastikan semua elemen ada sebelum menjalankan interval
+    if (!sEl || !rEl || !dEl) return;
+
+    const slides = [sEl, rEl, dEl];
+    let currentIdx = 0;
+
+    // Bersihkan interval yang mungkin sudah jalan agar tidak dobel
+    if (window.autoToggleInterval) clearInterval(window.autoToggleInterval);
+
+    window.autoToggleInterval = setInterval(() => {
+        // Hilangkan kelas active dari slide saat ini
+        slides[currentIdx].classList.remove('active');
+        
+        // Pindah ke index berikutnya (0 -> 1 -> 2 -> 0)
+        currentIdx = (currentIdx + 1) % slides.length;
+        
+        // Munculkan slide baru
+        slides[currentIdx].classList.add('active');
+    }, 8000); // Berganti setiap 8 detik
 }
 
 function renderGrafik() {
