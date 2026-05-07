@@ -505,22 +505,43 @@ function renderSidebar() {
     container.innerHTML = sidebarHTML;
 }
 
-function prosesLogin() {
+async function prosesLogin() {
     const user = document.getElementById('inputUser').value;
     const pass = document.getElementById('inputPass').value;
-    if (user === "Admin" && pass === "txpku1") {
-        isLoggedIn = true;
-        localStorage.setItem("isLoggedIn", "true");
-        
-        const modalElement = document.getElementById('loginModal');
-        const modal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
-        modal.hide();
-        
-        alert("Otorisasi Berhasil!");
-        // Refresh halaman agar logika pengecekan login berjalan ulang
-        location.reload(); 
-    } else {
-        alert("Username/Password Salah!");
+    const btn = document.querySelector("#loginModal button");
+    
+    if (!user || !pass) return alert("Isi username dan password!");
+
+    // Tampilkan status loading pada tombol
+    const teksAsli = btn.innerText;
+    btn.innerText = "⏳ Memverifikasi...";
+    btn.disabled = true;
+
+    try {
+        // Kirim permintaan verifikasi ke server
+        const response = await fetch(`${SCRIPT_URL}?action=login&user=${encodeURIComponent(user)}&pass=${encodeURIComponent(pass)}`);
+        const result = await response.json();
+
+        if (result.success) {
+            isLoggedIn = true;
+            localStorage.setItem("isLoggedIn", "true");
+            alert("Otorisasi Berhasil!");
+            
+            // Tutup modal secara otomatis
+            const modalElement = document.getElementById('loginModal');
+            const modal = bootstrap.Modal.getInstance(modalElement);
+            if (modal) modal.hide();
+            
+            location.reload(); 
+        } else {
+            alert("Username atau Password Salah!");
+        }
+    } catch (error) {
+        console.error("Login Error:", error);
+        alert("Gagal terhubung ke server. Periksa koneksi internet.");
+    } finally {
+        btn.innerText = teksAsli;
+        btn.disabled = false;
     }
 }
 
