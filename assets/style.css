@@ -190,3 +190,18 @@ body {
     background-color: transparent !important;
     border-bottom: 3px solid #d9534f !important;
 }
+
+/* Menghilangkan margin bawah ekstra pada tab-content */
+.tab-content {
+    margin-bottom: 0 !important;
+}
+
+/* Mengatur agar tabel punya jarak yang pas (tidak terlalu jauh) */
+.table-responsive {
+    margin-top: 15px !important;
+}
+
+/* Memastikan canvas mengisi kontainer dengan pas */
+canvas {
+    width: 100% !important;
+}

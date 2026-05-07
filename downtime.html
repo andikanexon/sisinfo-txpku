@@ -24,7 +24,7 @@
 
   <div class="ticker-wrapper">
     <div class="ticker-scroll">
-      <span class="ticker-item">📢 <strong>INFO TEKNIK:</strong> Pantau frekuensi gangguan per unit kerja untuk evaluasi pemeliharaan. • Media Pemersatu Bangsa!</span>
+      <span class="ticker-item">📢 <strong>INFO TEKNIK:</strong> Pantau frekuensi downtime per unit kerja untuk evaluasi pemeliharaan. • Media Pemersatu Bangsa!</span>
     </div>
   </div>
 
@@ -59,11 +59,15 @@
       </div>
     </div>
 
-    <!-- KONTINER TAB (SUB-MENU) -->
 <ul class="nav nav-tabs mb-3 border-0" id="downtimeTabs" role="tablist">
   <li class="nav-item">
     <button class="nav-link active fw-bold text-dark border-0 border-bottom border-3 border-danger" id="tab-transmisi" data-bs-toggle="tab" data-bs-target="#viewTransmisi" type="button" role="tab">
-      📊 Grafik Per Transmisi
+      📊 Frekuensi Downtime
+    </button>
+  </li>
+  <li class="nav-item">
+    <button class="nav-link fw-bold text-dark border-0" id="tab-total" data-bs-toggle="tab" data-bs-target="#viewTotalDowntime" type="button" role="tab">
+      ⏳ Total Downtime
     </button>
   </li>
   <li class="nav-item">
@@ -73,45 +77,49 @@
   </li>
 </ul>
 
-<!-- ISI TAB GRAFIK -->
-<div class="tab-content">
-  <!-- Sub-Menu 1: Grafik Transmisi -->
+<div class="tab-content" id="myTabContent">
   <div class="tab-pane fade show active" id="viewTransmisi" role="tabpanel">
-    <div class="card shadow-sm border-0 p-3 mb-4">
-      <div style="height: 450px;">
+    <div class="card shadow-sm border-0 p-3 mb-2"> 
+      <div style="height: 400px;"> 
         <canvas id="chartDowntime"></canvas>
       </div>
     </div>
   </div>
 
-  <!-- Sub-Menu 2: Grafik Petugas -->
+  <div class="tab-pane fade" id="viewTotalDowntime" role="tabpanel">
+    <div class="card shadow-sm border-0 p-3 mb-2">
+      <div style="height: 400px;">
+        <canvas id="chartTotalDowntime"></canvas>
+      </div>
+    </div>
+  </div>
+
   <div class="tab-pane fade" id="viewPetugas" role="tabpanel">
-    <div class="card shadow-sm border-0 p-3 mb-4">
-      <div style="height: 450px;">
+    <div class="card shadow-sm border-0 p-3 mb-2">
+      <div style="height: 400px;">
         <canvas id="chartPetugasDowntime"></canvas>
       </div>
     </div>
   </div>
 </div>
 
-    <div class="table-responsive bg-white rounded shadow-sm border">
-      <table class="table table-hover table-bordered mb-0" style="font-size: 13px;">
-        <thead class="table-light text-center align-middle">
-          <tr>
-            <th style="width: 12%;">Tanggal</th>
-            <th style="width: 18%;">Unit Kerja</th>
-            <th style="width: 15%;">Waktu (Mulai-Selesai)</th>
-            <th style="width: 10%;">Durasi</th>
-            <th style="width: 20%;">Keterangan Downtime</th>
-            <th style="width: 15%;">Petugas</th>
-            <th style="width: 10%;">Eviden</th>
-          </tr>
-        </thead>
-        <tbody id="tabelDowntimeBody">
-          <tr><td colspan="7" class="text-center py-4 text-muted">Memuat data downtime...</td></tr>
-        </tbody>
-      </table>
-    </div>
+<div class="table-responsive bg-white rounded shadow-sm border mt-3">
+  <table class="table table-hover table-bordered mb-0" style="font-size: 13px;">
+    <thead class="table-light text-center align-middle">
+      <tr>
+        <th style="width: 12%;">Tanggal</th>
+        <th style="width: 18%;">Unit Kerja</th>
+        <th style="width: 15%;">Waktu</th>
+        <th style="width: 10%;">Durasi</th>
+        <th style="width: 20%;">Keterangan Downtime</th>
+        <th style="width: 15%;">Petugas</th>
+        <th style="width: 10%;">Eviden</th>
+      </tr>
+    </thead>
+    <tbody id="tabelDowntimeBody">
+      <tr><td colspan="7" class="text-center py-4 text-muted">Memuat data downtime...</td></tr>
+    </tbody>
+    </table>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

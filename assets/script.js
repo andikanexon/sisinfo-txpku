@@ -6,7 +6,8 @@ let statusGlobal = [];
 let downtimeGlobal = []; 
 let grafikInstance = null;
 let chartDowntimeInstance = null;
-let chartPetugasDTInstance = null; 
+let chartPetugasDTInstance = null;
+let chartTotalDowntimeInstance = null; 
 let currentSlide = 'status';
 let isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
 
@@ -301,6 +302,74 @@ function renderGrafikPetugasDowntime() {
     });
 }
 
+function renderGrafikTotalDowntime() {
+    const canvas = document.getElementById('chartTotalDowntime');
+    if (!canvas || !downtimeGlobal.length) return;
+
+    const b = document.getElementById("filterDTBulan").value;
+    const t = document.getElementById("filterDTTahun").value;
+    
+    const durasiMap = {};
+    daftarTxGlobal.forEach(s => durasiMap[s] = 0);
+
+    const filtered = downtimeGlobal.filter(i => {
+        const d = new Date(i.tanggalRaw);
+        const matchBulan = (b === "Semua" || d.getMonth().toString() === b);
+        const matchTahun = (t === "Semua" || d.getFullYear().toString() === t);
+        return matchBulan && matchTahun;
+    });
+
+    filtered.forEach(i => {
+        if (durasiMap.hasOwnProperty(i.site)) {
+            durasiMap[i.site] += (parseInt(i.durasi) || 0);
+        }
+    });
+
+    const sortedArray = Object.keys(durasiMap)
+        .map(k => ({ s: k, v: durasiMap[k] }))
+        .sort((x, y) => y.v - x.v);
+
+    if (chartTotalDowntimeInstance) chartTotalDowntimeInstance.destroy();
+    chartTotalDowntimeInstance = new Chart(canvas.getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: sortedArray.map(i => i.s),
+            datasets: [{ 
+                label: 'Total Durasi', 
+                data: sortedArray.map(i => i.v), 
+                backgroundColor: '#d9534f' 
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return 'Total: ' + formatDurasi(context.raw);
+                        }
+                    }
+                }
+            },
+            scales: { 
+                y: { 
+                    beginAtZero: true,
+                    suggestedMax: 2100,
+                    ticks: {
+                        // SET SKALA PER 5 JAM (300 MENIT)
+                        stepSize: 300, 
+                        callback: function(value) {
+                            return formatDurasi(value);
+                        }
+                    },
+                    title: { display: true, text: 'Durasi Downtime' }
+                } 
+            }
+        }
+    });
+}
+
 function tampilkanTabelDowntime() {
     const tBody = document.getElementById("tabelDowntimeBody");
     if (!tBody) return;
@@ -330,21 +399,22 @@ function tampilkanTabelDowntime() {
             ev += `<a href="${i.bukti2}" target="_blank" class="btn btn-sm btn-info text-white" style="font-size:10px">E2</a>`;
         }
 
-        return `
+       return `
         <tr>
             <td class="text-center">${i.tanggal}</td>
             <td class="fw-bold">${i.site}</td>
             <td class="text-center">${i.waktu}</td>
-            <td class="text-center text-danger fw-bold">${i.durasi} Menit</td>
+            <td class="text-center text-danger fw-bold">${formatDurasi(i.durasi)}</td>
             <td>${i.keterangan}</td>
             <td class="text-center">${i.petugas}</td>
             <td class="text-center">${ev || '-'}</td>
         </tr>`;
-    }).join('') || '<tr><td colspan="7" class="text-center py-4 text-muted">⚠️ Tidak ada data gangguan pada periode ini.</td></tr>';
+    }).join('') || '<tr><td colspan="7" class="text-center py-4 text-muted">⚠️ Tidak ada data.</td></tr>';
 }
 
 function updateHalamanDowntime() {
     renderGrafikDowntime();   // Update Grafiknya
+    renderGrafikTotalDowntime();
     renderGrafikPetugasDowntime();
     tampilkanTabelDowntime(); // Update Tabelnya
 }
@@ -531,6 +601,19 @@ function renderGrafik() {
         data: { labels: Object.keys(counts), datasets: [{ label: 'Total Kegiatan', data: Object.values(counts), backgroundColor: '#003366' }] },
         options: { responsive: true, maintainAspectRatio: false }
     });
+}
+
+function formatDurasi(totalMenit) {
+    if (!totalMenit || totalMenit === 0) return "0 Menit";
+    
+    const jam = Math.floor(totalMenit / 60);
+    const menit = totalMenit % 60;
+
+    if (jam > 0) {
+        return menit > 0 ? `${jam} Jam ${menit} Menit` : `${jam} Jam`;
+    } else {
+        return `${menit} Menit`;
+    }
 }
 
 // --- 8. RUN ON START ---
