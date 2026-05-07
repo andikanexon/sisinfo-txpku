@@ -43,34 +43,37 @@
       </div>
     </div>
 
-    <div class="row g-3 mb-4">
-      <div class="col-6 col-md-3">
-        <div class="card border-0 shadow-sm p-3 text-center stat-card h-100">
-          <small class="text-muted fw-bold">TOTAL LAPORAN INDIVIDU</small>
-          <h3 class="fw-bold mb-0 text-primary" id="statTotalLaporan">0</h3>
-        </div>
-      </div>
-      <div class="col-6 col-md-3">
-        <div class="card border-0 shadow-sm p-3 text-center stat-card h-100" style="border-left-color: #28a745;">
-          <small class="text-muted fw-bold">HARI INI</small>
-          <h3 class="fw-bold mb-0 text-success" id="statHariIni">0</h3>
-        </div>
-      </div>
-      <div class="col-6 col-md-3">
-        <div class="card border-0 shadow-sm p-3 text-center stat-card h-100" style="border-left-color: #ffc107;">
-          <small class="text-muted fw-bold">PETUGAS</small>
-          <h3 class="fw-bold mb-0 text-warning" id="statTotalPersonel">0</h3>
-        </div>
-      </div>
-      <div class="col-6 col-md-3">
-        <div class="card border-0 shadow-sm p-3 text-center stat-card h-100" style="border-left-color: #17a2b8;">
-          <small class="text-muted fw-bold">TX NORMAL</small>
-          <h3 class="fw-bold mb-0 text-info" id="statEviden">0</h3>
-        </div>
-      </div>
+  <div class="row g-3 mb-4">
+  <div class="col-6 col-md-3">
+    <div class="card border-0 shadow-sm p-3 text-center stat-card h-100" style="border-left-color: #003366;">
+      <small class="text-muted fw-bold">TOTAL KEGIATAN INDIVIDU</small>
+      <h3 class="fw-bold mb-0" id="statTotalLaporan" style="color: #003366;">0</h3>
     </div>
+  </div>
 
-    <div class="fade-container">
+  <div class="col-6 col-md-3">
+    <div class="card border-0 shadow-sm p-3 text-center stat-card h-100" style="border-left-color: #d9534f;">
+      <small class="text-muted fw-bold">DOWNTIME BULAN INI</small>
+      <h3 class="fw-bold mb-0 text-danger" id="statTotalHariIni">0</h3>
+    </div>
+  </div>
+
+  <div class="col-6 col-md-3">
+    <div class="card border-0 shadow-sm p-3 text-center stat-card h-100" style="border-left-color: #ffc107;">
+      <small class="text-muted fw-bold">DOWNTIME BULAN LALU</small>
+      <h3 class="fw-bold mb-0 text-warning" id="statTotalPersonel">0</h3>
+    </div>
+  </div>
+
+  <div class="col-6 col-md-3">
+    <div class="card border-0 shadow-sm p-3 text-center stat-card h-100" style="border-left-color: #17a2b8;">
+      <small class="text-muted fw-bold">TX ON AIR</small>
+      <h3 class="fw-bold mb-0 text-info" id="statEviden">0</h3>
+    </div>
+  </div>
+</div>
+
+<div class="fade-container">
   <div id="itemStatus" class="fade-item active">
     <div class="card border-0 shadow-sm mb-4">
       <div class="card-header bg-white fw-bold border-0 pt-3">📡 Status Transmisi</div>
@@ -90,14 +93,14 @@
   </div>
 
   <div id="itemDowntimeRecent" class="fade-item">
-  <div class="card border-0 shadow-sm mb-4">
-    <div class="card-header bg-white fw-bold border-0 pt-3 d-flex justify-content-between align-items-center">
-      <span>📉 5 Laporan Downtime Terakhir</span>
-      <a href="downtime.html" class="text-decoration-none small text-danger">Lihat Semua →</a>
-    </div>
-    <div class="card-body p-0">
-      <ul class="list-group list-group-flush" id="listDowntimeRecent">
-        </ul>
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="card-header bg-white fw-bold border-0 pt-3 d-flex justify-content-between align-items-center">
+        <span>📉 5 Laporan Downtime Terakhir</span>
+        <a href="downtime.html" class="text-decoration-none small text-danger">Lihat Semua →</a>
+      </div>
+      <div class="card-body p-0">
+        <ul class="list-group list-group-flush" id="listDowntimeRecent"></ul>
+      </div>
     </div>
   </div>
 </div>

@@ -92,83 +92,98 @@ function inisialisasiHalaman() {
 
 // --- 3. LOGIKA DASHBOARD (index.html) ---
 function updateBeranda() {
-    // Statistik Atas
-    if (document.getElementById("statTotalLaporan")) document.getElementById("statTotalLaporan").innerText = dataGlobal.length;
-    if (document.getElementById("statHariIni")) {
-        const hariIni = new Date().toLocaleDateString('en-CA');
-        const count = dataGlobal.filter(i => new Date(i.timestampTanggal).toLocaleDateString('en-CA') === hariIni).length;
-        document.getElementById("statHariIni").innerText = count;
+    const skrg = new Date();
+    const bulanIni = skrg.getMonth();
+    const tahunIni = skrg.getFullYear();
+
+    const bulanLalu = bulanIni === 0 ? 11 : bulanIni - 1;
+    const tahunLalu = bulanIni === 0 ? tahunIni - 1 : tahunIni;
+
+    // 1. TOTAL KEGIATAN (Menggunakan ID: statTotalLaporan)
+    if (document.getElementById("statTotalLaporan")) {
+        document.getElementById("statTotalLaporan").innerText = dataGlobal.length;
     }
+
+    // 2. DOWNTIME BULAN INI
+    if (document.getElementById("statTotalHariIni")) {
+        const countBlnIni = downtimeGlobal.filter(i => {
+            const d = new Date(i.tanggalRaw);
+            return i.tanggalRaw > 0 && d.getMonth() === bulanIni && d.getFullYear() === tahunIni;
+        }).length;
+        document.getElementById("statTotalHariIni").innerText = countBlnIni;
+    }
+
+    // 3. DOWNTIME BULAN LALU
     if (document.getElementById("statTotalPersonel")) {
-        const listPetugas = [...new Set(dataGlobal.map(i => i.nama))].filter(n => n);
-        document.getElementById("statTotalPersonel").innerText = listPetugas.length;
+        const countBlnLalu = downtimeGlobal.filter(i => {
+            const d = new Date(i.tanggalRaw);
+            return i.tanggalRaw > 0 && d.getMonth() === bulanLalu && d.getFullYear() === tahunLalu;
+        }).length;
+        document.getElementById("statTotalPersonel").innerText = countBlnLalu;
     }
+
+    // 4. TX NORMAL
     if (document.getElementById("statEviden")) {
-        const txNormal = statusGlobal.filter(i => {
+        const countNormal = statusGlobal.filter(i => {
             const s = i.status ? String(i.status).toLowerCase().trim() : "";
             return s === "normal" || s === "on" || s === "online" || s === "on air";
         }).length;
-        document.getElementById("statEviden").innerText = txNormal;
+        document.getElementById("statEviden").innerText = countNormal;
     }
 
-    // Render Grid Status TX
-    let statusHtml = "";
+    // Panggil fungsi render untuk menampilkan data ke elemen HTML
+    renderStatusTx();
+    renderKegiatanTerbaru();
+    renderDowntimeTerbaru();
+    startAutoToggle();
+}
+
+function renderStatusTx() {
+    const grid = document.getElementById("gridStatusTx");
+    if (!grid) return;
+    let html = "";
     statusGlobal.forEach(item => {
         let cls = "status-badge-warn"; 
         let s = item.status ? String(item.status).toLowerCase().trim() : "";
         if (s === "normal" || s === "on" || s === "online" || s === "on air") cls = "status-badge-on";
         if (s === "off" || s === "down" || s === "off-air") cls = "status-badge-off";
-        statusHtml += `
+        html += `
             <div class="col-6 col-md-3">
                 <div class="site-card p-2 text-center shadow-sm border">
-                    <div class="small fw-bold text-dark">${item.site || 'Tanpa Nama'}</div>
+                    <div class="small fw-bold text-dark">${item.site || 'N/A'}</div>
                     <span class="badge ${cls} w-100 mt-1" style="font-size:10px">${item.status || 'Unknown'}</span>
                 </div>
             </div>`;
     });
-    const grid = document.getElementById("gridStatusTx");
-    if (grid) grid.innerHTML = statusHtml || '<p class="text-center w-100">Menunggu data site...</p>';
+    grid.innerHTML = html || '<p class="text-center w-100">Menunggu data site...</p>';
+}
 
-    // Render 5 Kegiatan Terbaru (URAIAIN DIKEMBALIKAN)
-    const dataUrut = [...dataGlobal].sort((a, b) => new Date(b.timestampTanggal) - new Date(a.timestampTanggal));
+function renderKegiatanTerbaru() {
     const listRecent = document.getElementById("listRecentActivity");
-    if (listRecent) {
-        listRecent.innerHTML = dataUrut.slice(0, 5).map(i => `
-            <li class="list-group-item d-flex justify-content-between align-items-center py-3">
-                <div style="max-width: 85%;">
-                    <div class="fw-bold" style="font-size:14px; color:#003366">${i.nama}</div>
-                    <small class="text-muted">📅 ${i.tanggal}</small>
-                    <div class="mt-1 text-dark" style="font-size:13px; line-height:1.4;">
-                        ${i.uraian ? i.uraian.substring(0, 65) : '-'}...
-                    </div>
+    if (!listRecent) return;
+    const dataUrut = [...dataGlobal].sort((a, b) => b.timestampTanggal - a.timestampTanggal);
+    listRecent.innerHTML = dataUrut.slice(0, 5).map(i => `
+        <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+            <div style="max-width: 85%;">
+                <div class="fw-bold" style="font-size:14px; color:#003366">${i.nama}</div>
+                <small class="text-muted">📅 ${i.tanggal}</small>
+                <div class="mt-1 text-dark" style="font-size:13px; line-height:1.4;">
+                    ${i.uraian ? i.uraian.substring(0, 65) : '-'}...
                 </div>
-                <span class="badge bg-primary rounded-pill" style="font-size:10px">${i.shift || '-'}</span>
-            </li>`).join('') || '<li class="list-group-item text-center">Belum ada aktivitas</li>';
-    }
+            </div>
+            <span class="badge bg-primary rounded-pill" style="font-size:10px">${i.shift || '-'}</span>
+        </li>`).join('') || '<li class="list-group-item text-center">Belum ada aktivitas.</li>';
 }
 
 function renderDowntimeTerbaru() {
     const listContainer = document.getElementById("listDowntimeRecent");
     if (!listContainer || !downtimeGlobal.length) return;
-
-    // Ambil 5 data downtime terbaru berdasarkan urutan waktu kejadian
-    const latestDT = [...downtimeGlobal]
-        .sort((a, b) => b.tanggalRaw - a.tanggalRaw)
-        .slice(0, 5);
-
+    const latestDT = [...downtimeGlobal].sort((a, b) => b.tanggalRaw - a.tanggalRaw).slice(0, 5);
     listContainer.innerHTML = latestDT.map(i => `
         <li class="list-group-item border-0 py-3 border-bottom">
-          <div class="d-flex justify-content-between align-items-start">
-            <div>
-              <div class="fw-bold text-dark" style="font-size: 14px;">${i.site}</div>
-              <small class="text-muted">
-                ${i.tanggal} • <span class="text-danger fw-bold">${formatDurasi(i.durasi)}</span>
-              </small>
-            </div>
-          </div>
-          <div class="mt-1 small text-secondary text-truncate" style="max-width: 100%; font-style: italic;">
-            "${i.keterangan}"
-          </div>
+          <div class="fw-bold text-dark" style="font-size: 14px;">${i.site}</div>
+          <small class="text-muted">${i.tanggal} • <span class="text-danger fw-bold">${formatDurasi(i.durasi)}</span></small>
+          <div class="mt-1 small text-secondary text-truncate" style="font-style: italic;">"${i.keterangan}"</div>
         </li>
     `).join('');
 }
@@ -640,29 +655,22 @@ function formatTanggalIndo(ts) {
 }
 
 function startAutoToggle() {
-    const sEl = document.getElementById('itemStatus');
-    const rEl = document.getElementById('itemRecent');
-    const dEl = document.getElementById('itemDowntimeRecent');
+    const slides = [
+        document.getElementById('itemStatus'),
+        document.getElementById('itemRecent'),
+        document.getElementById('itemDowntimeRecent')
+    ];
     
-    // Pastikan semua elemen ada sebelum menjalankan interval
-    if (!sEl || !rEl || !dEl) return;
+    if (!slides[0] || !slides[1] || !slides[2]) return;
 
-    const slides = [sEl, rEl, dEl];
     let currentIdx = 0;
-
-    // Bersihkan interval yang mungkin sudah jalan agar tidak dobel
     if (window.autoToggleInterval) clearInterval(window.autoToggleInterval);
 
     window.autoToggleInterval = setInterval(() => {
-        // Hilangkan kelas active dari slide saat ini
         slides[currentIdx].classList.remove('active');
-        
-        // Pindah ke index berikutnya (0 -> 1 -> 2 -> 0)
         currentIdx = (currentIdx + 1) % slides.length;
-        
-        // Munculkan slide baru
         slides[currentIdx].classList.add('active');
-    }, 8000); // Berganti setiap 8 detik
+    }, 8000);
 }
 
 function renderGrafik() {
