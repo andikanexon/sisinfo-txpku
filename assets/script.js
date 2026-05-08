@@ -260,24 +260,29 @@ function inisialisasiFilterDowntime() {
 
 function renderGrafikDowntime() {
     const canvas = document.getElementById('chartDowntime');
-    if (!canvas || !downtimeGlobal.length) return;
+    const filterBulan = document.getElementById("filterDTBulan");
+    const filterTahun = document.getElementById("filterDTTahun");
 
-    const b = document.getElementById("filterDTBulan").value;
-    const t = document.getElementById("filterDTTahun").value;
+    // PELINDUNG: Jika elemen tidak ada di halaman ini, jangan teruskan
+    if (!canvas || !filterBulan || !filterTahun || !downtimeGlobal.length) return;
+
+    const b = filterBulan.value;
+    const t = filterTahun.value;
     
     const dataMap = {};
-    daftarTxGlobal.forEach(s => dataMap[s] = 0);
+    // Pastikan daftarTxGlobal adalah array
+    (daftarTxGlobal || []).forEach(s => dataMap[s] = 0);
 
-    // FILTERING: Pastikan menggunakan tanggalRaw
     const filtered = downtimeGlobal.filter(i => {
-        const d = new Date(i.tanggalRaw); // Merujuk ke Tanggal Kejadian (Kolom C)
+        if (!i.tanggalRaw) return false;
+        const d = new Date(i.tanggalRaw);
         const matchBulan = (b === "Semua" || d.getMonth().toString() === b);
         const matchTahun = (t === "Semua" || d.getFullYear().toString() === t);
         return matchBulan && matchTahun;
     });
 
     filtered.forEach(i => {
-        if (dataMap.hasOwnProperty(i.site)) dataMap[i.site] += 1;
+        if (i.site && dataMap.hasOwnProperty(i.site)) dataMap[i.site] += 1;
     });
 
     const sortedArray = Object.keys(dataMap).map(k => ({s: k, v: dataMap[k]})).sort((x, y) => y.v - x.v);
@@ -286,48 +291,53 @@ function renderGrafikDowntime() {
     chartDowntimeInstance = new Chart(canvas.getContext('2d'), {
         type: 'bar',
         data: {
-            labels: sortedArray.map(i => i.s),
-            datasets: [{ label: 'Jumlah Gangguan', data: sortedArray.map(i => i.v), backgroundColor: '#d9534f' }]
+            labels: sortedArray.map(i => (i.s || "").replace(/Satuan Transmisi /gi, "").trim()),
+            datasets: [{ 
+                label: 'Frekuensi Gangguan', 
+                data: sortedArray.map(i => i.v), 
+                backgroundColor: '#d9534f' 
+            }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+            scales: {
+                x: { ticks: { minRotation: 0, maxRotation: 0, autoSkip: false, font: { size: 10 } } },
+                y: { beginAtZero: true, ticks: { stepSize: 1 } }
+            }
         }
     });
 }
 
 function renderGrafikPetugasDowntime() {
     const canvas = document.getElementById('chartPetugasDowntime');
-    if (!canvas || !downtimeGlobal.length) return;
+    const filterBulan = document.getElementById("filterDTBulan");
+    const filterTahun = document.getElementById("filterDTTahun");
 
-    const b = document.getElementById("filterDTBulan").value;
-    const t = document.getElementById("filterDTTahun").value;
+    if (!canvas || !filterBulan || !filterTahun || !downtimeGlobal.length) return;
+
+    const b = filterBulan.value;
+    const t = filterTahun.value;
     
-    // 1. Filter data berdasarkan periode
     const filtered = downtimeGlobal.filter(i => {
+        if (!i.tanggalRaw) return false;
         const d = new Date(i.tanggalRaw);
         const matchBulan = (b === "Semua" || d.getMonth().toString() === b);
         const matchTahun = (t === "Semua" || d.getFullYear().toString() === t);
         return matchBulan && matchTahun;
     });
 
-    // 2. Hitung laporan per petugas (Logika pecah nama)
     const counts = {};
     filtered.forEach(i => {
         if (i.petugas) {
-            // Memisahkan nama jika dipisahkan oleh koma (,) atau kata "dan"
             const listNama = i.petugas.split(/[,&]| dan /); 
             listNama.forEach(nama => {
                 const namaBersih = nama.trim();
-                if (namaBersih) {
-                    counts[namaBersih] = (counts[namaBersih] || 0) + 1;
-                }
+                if (namaBersih) counts[namaBersih] = (counts[namaBersih] || 0) + 1;
             });
         }
     });
 
-    // Urutkan nama berdasarkan jumlah laporan terbanyak
     const sortedLabels = Object.keys(counts).sort(); 
     const sortedValues = sortedLabels.map(label => counts[label]);
 
@@ -339,13 +349,13 @@ function renderGrafikPetugasDowntime() {
             datasets: [{
                 label: 'Kontribusi Laporan',
                 data: sortedValues,
-                borderColor: '#003366', // Biru TVRI[cite: 7]
+                borderColor: '#003366',
                 backgroundColor: 'rgba(0, 51, 102, 0.1)',
                 borderWidth: 3,
                 fill: true,
                 tension: 0.1, 
                 pointRadius: 5,
-                pointBackgroundColor: '#d9534f' // Merah[cite: 7]
+                pointBackgroundColor: '#d9534f'
             }]
         },
         options: {
@@ -361,15 +371,19 @@ function renderGrafikPetugasDowntime() {
 
 function renderGrafikTotalDowntime() {
     const canvas = document.getElementById('chartTotalDowntime');
-    if (!canvas || !downtimeGlobal.length) return;
+    const filterBulan = document.getElementById("filterDTBulan");
+    const filterTahun = document.getElementById("filterDTTahun");
 
-    const b = document.getElementById("filterDTBulan").value;
-    const t = document.getElementById("filterDTTahun").value;
+    if (!canvas || !filterBulan || !filterTahun || !downtimeGlobal.length) return;
+
+    const b = filterBulan.value;
+    const t = filterTahun.value;
     
     const durasiMap = {};
-    daftarTxGlobal.forEach(s => durasiMap[s] = 0);
+    (daftarTxGlobal || []).forEach(s => durasiMap[s] = 0);
 
     const filtered = downtimeGlobal.filter(i => {
+        if (!i.tanggalRaw) return false;
         const d = new Date(i.tanggalRaw);
         const matchBulan = (b === "Semua" || d.getMonth().toString() === b);
         const matchTahun = (t === "Semua" || d.getFullYear().toString() === t);
@@ -377,20 +391,18 @@ function renderGrafikTotalDowntime() {
     });
 
     filtered.forEach(i => {
-        if (durasiMap.hasOwnProperty(i.site)) {
+        if (i.site && durasiMap.hasOwnProperty(i.site)) {
             durasiMap[i.site] += (parseInt(i.durasi) || 0);
         }
     });
 
-    const sortedArray = Object.keys(durasiMap)
-        .map(k => ({ s: k, v: durasiMap[k] }))
-        .sort((x, y) => y.v - x.v);
+    const sortedArray = Object.keys(durasiMap).map(k => ({ s: k, v: durasiMap[k] })).sort((x, y) => y.v - x.v);
 
     if (chartTotalDowntimeInstance) chartTotalDowntimeInstance.destroy();
     chartTotalDowntimeInstance = new Chart(canvas.getContext('2d'), {
         type: 'bar',
         data: {
-            labels: sortedArray.map(i => i.s),
+            labels: sortedArray.map(i => (i.s || "").replace(/Satuan Transmisi /gi, "").trim()),
             datasets: [{ 
                 label: 'Total Durasi', 
                 data: sortedArray.map(i => i.v), 
@@ -403,24 +415,22 @@ function renderGrafikTotalDowntime() {
             plugins: {
                 tooltip: {
                     callbacks: {
-                        label: function(context) {
-                            return 'Total: ' + formatDurasi(context.raw);
-                        }
+                        label: function(context) { return 'Total: ' + formatDurasi(context.raw); }
                     }
                 }
             },
             scales: { 
+                x: { 
+                    ticks: { minRotation: 0, maxRotation: 0, autoSkip: false, font: { size: 10 } } 
+                },
                 y: { 
                     beginAtZero: true,
-                    suggestedMax: 2100,
+                    // PERUBAHAN DI SINI: suggestedMax dihapus agar skala reset tiap filter
                     ticks: {
-                        // SET SKALA PER 5 JAM (300 MENIT)
-                        stepSize: 300, 
-                        callback: function(value) {
-                            return formatDurasi(value);
-                        }
+                        stepSize: 300, // Tetap per 5 jam agar rapi
+                        callback: function(value) { return formatDurasi(value); }
                     },
-                    title: { display: true, text: 'Durasi Downtime' }
+                    title: { display: true, text: 'Durasi (Jam-Menit)' }
                 } 
             }
         }
