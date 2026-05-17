@@ -132,23 +132,27 @@ body {
 }
 
 /* --- ANIMASI FADE (DASHBOARD) --- */
+/* Container Utama */
 .fade-container {
-  position: relative;
-  min-height: 250px;
+    position: relative;
+    min-height: 350px; /* Sesuaikan dengan tinggi card rata-rata */
 }
 
+/* Base Style untuk Item Slide */
 .fade-item {
-  position: absolute;
-  width: 100%;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.8s ease-in-out, visibility 0.8s;
+    opacity: 0;
+    transition: opacity 0.8s ease-in-out; /* Durasi fade 0.8 detik */
+    display: none;
 }
 
+/* Saat elemen tampil di layar */
+.fade-item.show-flex {
+    display: block !important;
+}
+
+/* Saat animasi fade-in berjalan */
 .fade-item.active {
-  opacity: 1;
-  visibility: visible;
-  position: relative;
+    opacity: 1;
 }
 
 /* --- RESPONSIVE MOBILE --- */

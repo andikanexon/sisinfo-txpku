@@ -5,21 +5,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Log Kinerja - TVRI Riau</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <link rel="stylesheet" href="assets/style.css">
 </head>
 <body class="bg-light">
 
   <nav class="navbar navbar-light bg-white shadow-sm sticky-top">
-    <div class="container-fluid justify-content-start p-2 px-3">
-      <button class="navbar-toggler border-0 p-0 me-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuSidebar">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="navbar-brand d-flex align-items-center m-0 p-0">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e0/TVRI_Riau.svg" alt="Logo TVRI" style="height: 30px;" class="me-2">
-        <span class="mb-0 h5 fw-bold text-dark text-wrap">Sistem Informasi Transmisi TVRI Riau</span>
-      </div>
+  <div class="container-fluid justify-content-start p-2 px-3">
+    <button class="navbar-toggler border-0 p-0 me-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuSidebar">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="navbar-brand d-flex align-items-center m-0 p-0">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/e/e0/TVRI_Riau.svg" alt="Logo TVRI" style="height: 30px;" class="me-2">
+      <span class="mb-0 h5 fw-bold text-dark text-wrap">Sistem Informasi Transmisi TVRI Riau</span>
     </div>
-  </nav>
+
+    <div id="realtimeClock" class="ms-auto h5 fw-bold text-dark d-none d-md-block mb-0">
+    00:00:00
+    </div>
+  </div>
+</nav>
 
   <div class="ticker-wrapper">
     <div class="ticker-scroll">
@@ -49,28 +54,36 @@
 </div>
     <div id="sectionLogTabel">
       <div class="row mb-3 align-items-end g-2">
-  <div class="col-md-4">
-    <label class="small fw-bold text-muted">NAMA PEGAWAI:</label>
-    <select id="filterNama" class="form-select border-primary" onchange="tampilkanLogTabel(); cekStatusTombolPreview();">
-      <option value="Semua">-- Memuat Nama... --</option>
-    </select>
-  </div>
   <div class="col-md-3">
-    <label class="small fw-bold text-muted">BULAN:</label>
-    <select id="filterBulan" class="form-select border-primary" onchange="tampilkanLogTabel()">
-      <option value="Semua">Semua Bulan</option>
-      <option value="0">Januari</option><option value="1">Februari</option>
-      <option value="2">Maret</option><option value="3">April</option>
-      <option value="4">Mei</option><option value="5">Juni</option>
-      <option value="6">Juli</option><option value="7">Agustus</option>
-      <option value="8">September</option><option value="9">Oktober</option>
-      <option value="10">November</option><option value="11">Desember</option>
+    <label class="small fw-bold text-muted">NAMA PEGAWAI:</label>
+    <select id="filterNama" class="form-select border-primary" onchange="tampilkanLogTabel()">
+      <option value="Semua">Semua</option>
     </select>
   </div>
-  <div class="col-md-2">
+
+  <div class="col-md-3">
     <label class="small fw-bold text-muted">TAHUN:</label>
     <select id="filterTahun" class="form-select border-primary" onchange="tampilkanLogTabel()">
       <option value="Semua">Semua</option>
+    </select>
+  </div>
+
+  <div class="col-md-3">
+    <label class="small fw-bold text-muted">BULAN:</label>
+    <select id="filterBulan" class="form-select border-primary" onchange="tampilkanLogTabel()">
+      <option value="Semua">Semua</option>
+      <option value="0">Januari</option>
+      <option value="1">Februari</option>
+      <option value="2">Maret</option>
+      <option value="3">April</option>
+      <option value="4">Mei</option>
+      <option value="5">Juni</option>
+      <option value="6">Juli</option>
+      <option value="7">Agustus</option>
+      <option value="8">September</option>
+      <option value="9">Oktober</option>
+      <option value="10">November</option>
+      <option value="11">Desember</option>
     </select>
   </div>
   <div class="col-md-3">

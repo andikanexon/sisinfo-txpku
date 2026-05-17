@@ -6,6 +6,7 @@
   <title>Statistik & Grafik - TVRI Riau</title>
   
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   
@@ -14,16 +15,20 @@
 
 <body class="bg-light">
   <nav class="navbar navbar-light bg-white shadow-sm sticky-top">
-    <div class="container-fluid justify-content-start p-2 px-3">
-      <button class="navbar-toggler border-0 p-0 me-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuSidebar">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="navbar-brand d-flex align-items-center m-0 p-0">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e0/TVRI_Riau.svg" alt="Logo TVRI" style="height: 30px;" class="me-2">
-        <span class="mb-0 h5 fw-bold text-dark text-wrap">Sistem Informasi Transmisi TVRI Riau</span>
-      </div>
+  <div class="container-fluid justify-content-start p-2 px-3">
+    <button class="navbar-toggler border-0 p-0 me-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuSidebar">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="navbar-brand d-flex align-items-center m-0 p-0">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/e/e0/TVRI_Riau.svg" alt="Logo TVRI" style="height: 30px;" class="me-2">
+      <span class="mb-0 h5 fw-bold text-dark text-wrap">Sistem Informasi Transmisi TVRI Riau</span>
     </div>
-  </nav>
+
+    <div id="realtimeClock" class="ms-auto h5 fw-bold text-dark d-none d-md-block mb-0">
+      00:00:00
+    </div>
+  </div>
+</nav>
 
   <div id="sidebar-container"></div>
 
