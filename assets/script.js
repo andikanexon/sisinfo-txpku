@@ -398,7 +398,7 @@ function tampilkanTabelParameter() {
             <td>${i.exciter}</td>
             <td>${i.hpaOnh}</td>
             <td>${i.paOff}</td>
-            <td class="small text-start">${i.hpaAlarm}</td>
+            <td>${i.hpaAlarm}</td>
             <td>${i.linkMargin}</td>
             <td>${i.cnIrd}</td>
             <td>${i.avStatus}</td>
